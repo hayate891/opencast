@@ -44,20 +44,36 @@
       <artifactId>org.apache.servicemix.bundles.quartz</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>org.springframework.security.core</artifactId>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.spring-beans</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.spring-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.spring-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.spring-tx</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
-      <artifactId>org.springframework.security.web</artifactId>
+      <artifactId>spring-security-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.security.oauth</groupId>
       <artifactId>spring-security-oauth</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.springframework.osgi</groupId>
-      <artifactId>org.springframework.osgi.core</artifactId>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.nekohtml</groupId>
@@ -277,7 +293,6 @@
               org.springframework.context,
               org.springframework.context.annotation,
               org.springframework.dao,
-              org.springframework.security,
               org.springframework.security.access,
               org.springframework.security.access.event,
               org.springframework.security.authentication,

@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -87,7 +87,7 @@ public class OAuthSingleConsumerDetailsService implements ConsumerDetailsService
     bcd.setConsumerName(consumerName);
     bcd.setSignatureSecret(secret);
     List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-    authorities.add(new GrantedAuthorityImpl("ROLE_OAUTH_USER"));
+    authorities.add(new SimpleGrantedAuthority("ROLE_OAUTH_USER"));
     bcd.setAuthorities(authorities);
     bcd.setRequiredToObtainAuthenticatedToken(false); // false for 2 legged OAuth
     return bcd;
