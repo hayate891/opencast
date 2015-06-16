@@ -15,12 +15,12 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>org.springframework.security.core</artifactId>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.spring-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
-      <artifactId>org.springframework.security.web</artifactId>
+      <artifactId>spring-security-web</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
@@ -36,7 +36,7 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.osgi</groupId>
-      <artifactId>org.springframework.osgi.core</artifactId>
+      <artifactId>spring-osgi-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.osgi</groupId>

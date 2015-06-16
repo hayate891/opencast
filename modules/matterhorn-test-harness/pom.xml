@@ -33,9 +33,9 @@
       <version>0.9.5-RC2</version>
     </dependency>
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.core</artifactId>
-      <version>3.2.13.RELEASE</version>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.spring-core</artifactId>
+      <version>3.2.13.RELEASE_1</version>
     </dependency>
     <dependency>
       <groupId>dom4j</groupId>
