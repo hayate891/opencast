@@ -1,14 +1,10 @@
 
 
 site_name: Opencast - Administration Guide
-repo_url: https://bitbucket.org/opencast-community/matterhorn/src/d96a3d8680fa609d31eb5071b35d46c9a96e9bdf/docs/guides/admin/
+repo_url: https://bitbucket.org/opencast-community/matterhorn/src/develop/docs/guides/admin/docs
 
 # Default theme used is readthedocs
 theme: readthedocs
-
-# Some of the themes elements can be overridded by elements in this folder
-# Note: this is currently not working in on ReadTheDocs
-theme_dir: 'theme_override'
 
 # The directory that contain the source .md files
 docs_dir: 'docs'
@@ -59,8 +55,8 @@ pages:
 - ['modules/player.url.parameter.md', 'Modules', 'Player - URL Parameters']
 - ['modules/searchindex.md', 'Modules', 'Search Index']
 - ['modules/textextraction.md', 'Modules', 'Text Extraction']
-- ['modules/videoeditor.manual.md', 'Modules', 'Video Editor']
 - ['modules/videoeditor.setup.md', 'Modules', 'Video Editor - Setup']
+- ['modules/videoeditor.manual.md', 'Modules', 'Video Editor']
 - ['modules/videoeditor.architecture.md', 'Modules', 'Video Editor - Architecture']
 - ['modules/videosegmentation.md', 'Modules', 'Video Segmentation']
 - ['modules/youtubepublication.md', 'Modules', 'YouTube publication']
@@ -77,6 +73,7 @@ pages:
 - ['workflowoperationhandlers/compose-woh.md', 'Workflow Operation Handlers', 'Compose WOH']
 - ['workflowoperationhandlers/composite-woh.md', 'Workflow Operation Handlers', 'Composite WOH']
 - ['workflowoperationhandlers/concat-woh.md', 'Workflow Operation Handlers', 'Concat WOH']
+- ['workflowoperationhandlers/coverimage-woh.md', 'Workflow Operation Handlers', 'Cover Image WOH']
 - ['workflowoperationhandlers/defaults-woh.md', 'Workflow Operation Handlers', 'Defaults WOH']
 - ['workflowoperationhandlers/editor-woh.md', 'Workflow Operation Handlers', 'Editor WOH']
 - ['workflowoperationhandlers/email-woh.md', 'Workflow Operation Handlers', 'Email WOH']

@@ -1,10 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XML-instance"
   xsi:Location="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.opencastproject</groupId>
   <artifactId>base</artifactId>
-  <packaging>pom</packaging>
   <version>2.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
   <name>matterhorn</name>
   <description>The Opencast Project's Matterhorn software is a media capture, processing, and distribution system</description>
   <url>http://opencastproject.org</url>
@@ -13,13 +16,21 @@
   <prerequisites>
     <maven>3.0.4</maven>
   </prerequisites>
+
   <properties>
+    <checkstyle.skip>false</checkstyle.skip>
+    <jmeter.home>${project.build.directory}/jakarta-jmeter-${jmeter.version}</jmeter.home>
     <matterhorn.basedir>${basedir}</matterhorn.basedir>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <checkstyle.skip>false</checkstyle.skip>
+
+    <commons-compress.version>1.9</commons-compress.version>
     <jmeter.version>2.4</jmeter.version>
-    <jmeter.home>${project.build.directory}/jakarta-jmeter-${jmeter.version}</jmeter.home>
+    <json-simple.version>1.1</json-simple.version>
+    <osgi.compendium.version>4.2.0</osgi.compendium.version>
+    <osgi.core.version>4.2.0</osgi.core.version>
+    <osgi.enterprise.version>4.2.0</osgi.enterprise.version>
+    <karaf.version>3.0.3</karaf.version>
   </properties>
 
   <profiles>
@@ -54,6 +65,8 @@
         <module>modules/matterhorn-composer-service-api</module>
         <module>modules/matterhorn-composer-workflowoperation</module>
         <module>modules/matterhorn-conductor</module>
+        <module>modules/matterhorn-cover-image-api</module>
+        <module>modules/matterhorn-cover-image-workflowoperation</module>
         <module>modules/matterhorn-db</module>
         <module>modules/matterhorn-deprecated-workflowoperation</module>
         <module>modules/matterhorn-distribution-service-api</module>
@@ -68,7 +81,6 @@
         <module>modules/matterhorn-ingest-workflowoperation</module>
         <module>modules/matterhorn-inspection-service-api</module>
         <module>modules/matterhorn-inspection-workflowoperation</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-kernel</module>
         <module>modules/matterhorn-lti</module>
         <module>modules/matterhorn-mediapackage-manipulator</module>
@@ -83,7 +95,6 @@
         <module>modules/matterhorn-participation-api</module>
         <module>modules/matterhorn-presets</module>
         <module>modules/matterhorn-publication-service-api</module>
-        <module>modules/matterhorn-runtime-dependencies</module>
         <module>modules/matterhorn-runtime-info</module>
         <module>modules/matterhorn-runtime-info-ui-ng</module>
         <module>modules/matterhorn-scheduler-api</module>
@@ -137,13 +148,11 @@
         <module>modules/matterhorn-dublincore</module>
         <module>modules/matterhorn-ingest-service-api</module>
         <module>modules/matterhorn-ingest-service-impl</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-kernel</module>
         <module>modules/matterhorn-message-broker-api</module>
         <module>modules/matterhorn-message-broker-impl</module>
         <module>modules/matterhorn-metadata-api</module>
         <module>modules/matterhorn-mpeg7</module>
-        <module>modules/matterhorn-runtime-dependencies</module>
         <module>modules/matterhorn-runtime-info</module>
         <module>modules/matterhorn-scheduler-api</module>
         <module>modules/matterhorn-scheduler-impl</module>
@@ -174,13 +183,11 @@
         <module>modules/matterhorn-dublincore</module>
         <module>modules/matterhorn-ingest-service-api</module>
         <module>modules/matterhorn-ingest-service-impl</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-kernel</module>
         <module>modules/matterhorn-message-broker-api</module>
         <module>modules/matterhorn-message-broker-impl</module>
         <module>modules/matterhorn-metadata-api</module>
         <module>modules/matterhorn-mpeg7</module>
-        <module>modules/matterhorn-runtime-dependencies</module>
         <module>modules/matterhorn-runtime-info</module>
         <module>modules/matterhorn-runtime-info-ui</module>
         <module>modules/matterhorn-scheduler-api</module>
@@ -218,7 +225,6 @@
         <module>modules/matterhorn-distribution-service-download</module>
         <module>modules/matterhorn-distribution-service-streaming</module>
         <module>modules/matterhorn-dublincore</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-kernel</module>
         <module>modules/matterhorn-message-broker-api</module>
         <module>modules/matterhorn-message-broker-impl</module>
@@ -226,7 +232,6 @@
         <module>modules/matterhorn-mpeg7</module>
         <module>modules/matterhorn-publication-service-api</module>
         <module>modules/matterhorn-publication-service-youtube-v3</module>
-        <module>modules/matterhorn-runtime-dependencies</module>
         <module>modules/matterhorn-runtime-info</module>
         <module>modules/matterhorn-runtime-info-ui</module>
         <module>modules/matterhorn-series-service-api</module>
@@ -258,7 +263,6 @@
         <module>modules/matterhorn-distribution-service-download</module>
         <module>modules/matterhorn-distribution-service-streaming</module>
         <module>modules/matterhorn-dublincore</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-kernel</module>
         <module>modules/matterhorn-message-broker-api</module>
         <module>modules/matterhorn-message-broker-impl</module>
@@ -266,7 +270,6 @@
         <module>modules/matterhorn-mpeg7</module>
         <module>modules/matterhorn-publication-service-api</module>
         <module>modules/matterhorn-publication-service-youtube-v3</module>
-        <module>modules/matterhorn-runtime-dependencies</module>
         <module>modules/matterhorn-runtime-info</module>
         <module>modules/matterhorn-series-service-api</module>
         <module>modules/matterhorn-series-service-impl</module>
@@ -297,7 +300,6 @@
         <module>modules/matterhorn-distribution-service-download-remote</module>
         <module>modules/matterhorn-distribution-service-streaming-remote</module>
         <module>modules/matterhorn-dublincore</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-kernel</module>
         <module>modules/matterhorn-message-broker-api</module>
         <module>modules/matterhorn-message-broker-impl</module>
@@ -305,7 +307,6 @@
         <module>modules/matterhorn-mpeg7</module>
         <module>modules/matterhorn-publication-service-api</module>
         <module>modules/matterhorn-publication-service-youtube-remote</module>
-        <module>modules/matterhorn-runtime-dependencies</module>
         <module>modules/matterhorn-runtime-info</module>
         <module>modules/matterhorn-series-service-api</module>
         <module>modules/matterhorn-static-file-service-api</module>
@@ -343,14 +344,12 @@
         <module>modules/matterhorn-engage-theodul-plugin-timeline-statistics</module>
         <module>modules/matterhorn-engage-theodul-plugin-video-videojs</module>
         <module>modules/matterhorn-engage-ui</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-kernel</module>
         <module>modules/matterhorn-lti</module>
         <module>modules/matterhorn-message-broker-api</module>
         <module>modules/matterhorn-message-broker-impl</module>
         <module>modules/matterhorn-metadata-api</module>
         <module>modules/matterhorn-mpeg7</module>
-        <module>modules/matterhorn-runtime-dependencies</module>
         <module>modules/matterhorn-runtime-info</module>
         <module>modules/matterhorn-search-service-api</module>
         <module>modules/matterhorn-search-service-feeds</module>
@@ -379,8 +378,10 @@
       <modules>
         <module>modules/matterhorn-annotation-api</module>
         <module>modules/matterhorn-annotation-impl</module>
+        <module>modules/matterhorn-archive-api</module>
         <module>modules/matterhorn-authorization-xacml</module>
         <module>modules/matterhorn-common</module>
+        <module>modules/matterhorn-composer-service-api</module>
         <module>modules/matterhorn-db</module>
         <module>modules/matterhorn-dublincore</module>
         <module>modules/matterhorn-engage-theodul-api</module>
@@ -396,16 +397,16 @@
         <module>modules/matterhorn-engage-theodul-plugin-timeline-statistics</module>
         <module>modules/matterhorn-engage-theodul-plugin-video-videojs</module>
         <module>modules/matterhorn-engage-ui</module>
-        <module>modules/matterhorn-json</module>
+        <module>modules/matterhorn-inspection-service-api</module>
         <module>modules/matterhorn-kernel</module>
         <module>modules/matterhorn-lti</module>
         <module>modules/matterhorn-message-broker-api</module>
         <module>modules/matterhorn-message-broker-impl</module>
         <module>modules/matterhorn-metadata-api</module>
         <module>modules/matterhorn-mpeg7</module>
-        <module>modules/matterhorn-runtime-dependencies</module>
         <module>modules/matterhorn-runtime-info-ui</module>
         <module>modules/matterhorn-runtime-info</module>
+        <module>modules/matterhorn-scheduler-api</module>
         <module>modules/matterhorn-search-service-api</module>
         <module>modules/matterhorn-search-service-feeds</module>
         <module>modules/matterhorn-search-service-impl</module>
@@ -438,7 +439,6 @@
         <module>modules/matterhorn-distribution-service-download-remote</module>
         <module>modules/matterhorn-distribution-service-streaming-remote</module>
         <module>modules/matterhorn-dublincore</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-kernel</module>
         <module>modules/matterhorn-lti</module>
         <module>modules/matterhorn-message-broker-api</module>
@@ -447,7 +447,6 @@
         <module>modules/matterhorn-mpeg7</module>
         <module>modules/matterhorn-publication-service-api</module>
         <module>modules/matterhorn-publication-service-youtube-remote</module>
-        <module>modules/matterhorn-runtime-dependencies</module>
         <module>modules/matterhorn-search-service-api</module>
         <module>modules/matterhorn-search-service-remote</module>
         <module>modules/matterhorn-series-service-api</module>
@@ -473,19 +472,19 @@
         <module>modules/matterhorn-common</module>
         <module>modules/matterhorn-composer-ffmpeg</module>
         <module>modules/matterhorn-composer-service-api</module>
+        <module>modules/matterhorn-cover-image-api</module>
+        <module>modules/matterhorn-cover-image-impl</module>
         <module>modules/matterhorn-db</module>
         <module>modules/matterhorn-dictionary-api</module>
         <module>modules/matterhorn-dictionary-regexp</module>
         <module>modules/matterhorn-dublincore</module>
         <module>modules/matterhorn-inspection-service-api</module>
         <module>modules/matterhorn-inspection-service-ffmpeg</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-kernel</module>
         <module>modules/matterhorn-message-broker-api</module>
         <module>modules/matterhorn-message-broker-impl</module>
         <module>modules/matterhorn-metadata-api</module>
         <module>modules/matterhorn-mpeg7</module>
-        <module>modules/matterhorn-runtime-dependencies</module>
         <module>modules/matterhorn-runtime-info</module>
         <module>modules/matterhorn-series-service-api</module>
         <module>modules/matterhorn-series-service-impl</module>
@@ -520,27 +519,29 @@
         </property>
       </activation>
       <modules>
+        <module>modules/matterhorn-archive-api</module>
         <module>modules/matterhorn-authorization-xacml</module>
         <module>modules/matterhorn-caption-api</module>
         <module>modules/matterhorn-caption-impl</module>
         <module>modules/matterhorn-common</module>
         <module>modules/matterhorn-composer-ffmpeg</module>
         <module>modules/matterhorn-composer-service-api</module>
+        <module>modules/matterhorn-cover-image-api</module>
+        <module>modules/matterhorn-cover-image-impl</module>
         <module>modules/matterhorn-db</module>
         <module>modules/matterhorn-dictionary-api</module>
         <module>modules/matterhorn-dictionary-regexp</module>
         <module>modules/matterhorn-dublincore</module>
         <module>modules/matterhorn-inspection-service-api</module>
         <module>modules/matterhorn-inspection-service-ffmpeg</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-kernel</module>
         <module>modules/matterhorn-message-broker-api</module>
         <module>modules/matterhorn-message-broker-impl</module>
         <module>modules/matterhorn-metadata-api</module>
         <module>modules/matterhorn-mpeg7</module>
-        <module>modules/matterhorn-runtime-dependencies</module>
         <module>modules/matterhorn-runtime-info</module>
         <module>modules/matterhorn-runtime-info-ui</module>
+        <module>modules/matterhorn-scheduler-api</module>
         <module>modules/matterhorn-series-service-api</module>
         <module>modules/matterhorn-series-service-remote</module>
         <module>modules/matterhorn-silencedetection-api</module>
@@ -579,15 +580,15 @@
         <module>modules/matterhorn-common</module>
         <module>modules/matterhorn-composer-service-api</module>
         <module>modules/matterhorn-composer-service-remote</module>
+        <module>modules/matterhorn-cover-image-api</module>
+        <module>modules/matterhorn-cover-image-remote</module>
         <module>modules/matterhorn-inspection-service-api</module>
         <module>modules/matterhorn-inspection-service-remote</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-kernel</module>
         <module>modules/matterhorn-message-broker-api</module>
         <module>modules/matterhorn-message-broker-impl</module>
         <module>modules/matterhorn-metadata-api</module>
         <module>modules/matterhorn-mpeg7</module>
-        <module>modules/matterhorn-runtime-dependencies</module>
         <module>modules/matterhorn-series-service-api</module>
         <module>modules/matterhorn-silencedetection-api</module>
         <module>modules/matterhorn-silencedetection-remote</module>
@@ -618,7 +619,6 @@
       </activation>
       <modules>
         <module>modules/matterhorn-common</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-working-file-repository-service-api</module>
         <module>modules/matterhorn-working-file-repository-service-impl</module>
         <module>modules/matterhorn-workspace-api</module>
@@ -636,7 +636,6 @@
       </activation>
       <modules>
         <module>modules/matterhorn-common</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-working-file-repository-service-api</module>
         <module>modules/matterhorn-working-file-repository-service-remote</module>
         <module>modules/matterhorn-workspace-api</module>
@@ -655,7 +654,6 @@
       <modules>
         <module>modules/matterhorn-common</module>
         <module>modules/matterhorn-db</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-kernel</module>
         <module>modules/matterhorn-workflow-service-api</module>
         <module>modules/matterhorn-serviceregistry</module>
@@ -673,7 +671,6 @@
       <modules>
         <module>modules/matterhorn-common</module>
         <module>modules/matterhorn-kernel</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-serviceregistry-remote</module>
       </modules>
     </profile>
@@ -688,7 +685,6 @@
       </activation>
       <modules>
         <module>modules/matterhorn-common</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-search-service-api</module>
         <module>modules/matterhorn-search-service-impl</module>
         <module>modules/matterhorn-series-service-api</module>
@@ -715,7 +711,6 @@
         <module>modules/matterhorn-dataloader</module>
         <module>modules/matterhorn-db</module>
         <module>modules/matterhorn-dublincore</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-metadata-api</module>
         <module>modules/matterhorn-series-service-api</module>
         <module>modules/matterhorn-userdirectory</module>
@@ -733,7 +728,6 @@
       </activation>
       <modules>
         <module>modules/matterhorn-common</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-security-ldap</module>
         <module>modules/matterhorn-userdirectory-ldap</module>
       </modules>
@@ -805,6 +799,10 @@
         <module>modules/matterhorn-dictionary-none</module>
         <module>modules/matterhorn-speech-recognition-service-api</module>
         <module>modules/matterhorn-speech-recognition-workflowoperation</module>
+        <module>modules/matterhorn-execute-api</module>
+        <module>modules/matterhorn-execute-impl</module>
+        <module>modules/matterhorn-execute-operations</module>
+        <module>modules/matterhorn-execute-remote</module>
       </modules>
     </profile>
 
@@ -919,7 +917,6 @@
       </activation>
       <modules>
         <module>modules/matterhorn-common</module>
-        <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-kernel</module>
         <module>modules/matterhorn-load-test</module>
         <module>modules/matterhorn-runtime-info</module>
@@ -989,44 +986,6 @@
           <compilerArgument>${compilerArgument}</compilerArgument>
         </configuration>
       </plugin>
-      <!-- Deploy OSGi bundles to a container -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-to-felix</id>
-            <phase>install</phase>
-            <configuration>
-              <target if="deployTo">
-                <delete dir="${deployTo}/lib/matterhorn/${project.build.finalName}" />
-                <copy file="${project.build.directory}/${project.build.finalName}.jar" todir="${deployTo}/lib/matterhorn"
-                  failonerror="false" />
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>extract-to-felix</id>
-            <phase>install</phase>
-            <configuration>
-              <target if="unpackTo">
-                <delete file="${unpackTo}/lib/matterhorn/${project.build.finalName}.jar" />
-                <unzip dest="${unpackTo}/lib/matterhorn/${project.build.finalName}" overwrite="true">
-                  <fileset dir="${project.build.directory}">
-                    <include name="${project.build.finalName}.jar" />
-                  </fileset>
-                </unzip>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
       <!-- Attach sources for all builds -->
       <!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-source-plugin</artifactId> <executions>
         <execution> <id>attach-sources</id> <phase>verify</phase> <goals> <goal>jar-no-fork</goal> <goal>test-jar-no-fork</goal>
@@ -1075,7 +1034,7 @@
       <plugin>
         <groupId>com.atlassian.maven.plugins</groupId>
         <artifactId>maven-clover2-plugin</artifactId>
-        <version>3.1.5</version>
+        <version>4.0.4</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -1117,6 +1076,7 @@
                   <pluginExecutionFilter>
                     <groupId>com.github.eirslett</groupId>
                     <artifactId>frontend-maven-plugin</artifactId>
+                    <versionRange>[0.0.23,)</versionRange>
                     <goals>
                       <goal>install-node-and-npm</goal>
                       <goal>npm</goal>
@@ -1438,14 +1398,14 @@
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.core</artifactId>
-        <version>4.2.0</version>
+        <version>${osgi.core.version}</version>
         <scope>provided</scope>
       </dependency>
 
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.compendium</artifactId>
-        <version>4.2.0</version>
+        <version>${osgi.compendium.version}</version>
         <scope>provided</scope>
       </dependency>
 
@@ -1745,7 +1705,7 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
-        <version>1.5</version>
+        <version>${commons-compress.version}</version>
       </dependency>
 
       <dependency>
@@ -2554,6 +2514,18 @@
       <id>eclipselink</id>
       <name>Eclipselink Repo</name>
       <url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
+    </repository>
+    <!-- ServiceMix repo -->
+    <repository>
+      <id>servicemix</id>
+      <name>Apache ServiceMix Repository</name>
+      <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
     <!-- these are here as a backup in case the matterhorn nexus repository is down -->
     <!-- <repository> <id>com.springsource.repository.bundles.release</id> <name>SpringSource Enterprise Bundle Repository

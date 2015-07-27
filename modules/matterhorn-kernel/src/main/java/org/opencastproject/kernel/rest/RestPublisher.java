@@ -1,18 +1,24 @@
 /**
- *  Copyright 2009, 2010 The Regents of the University of California
- *  Licensed under the Educational Community License, Version 2.0
- *  (the "License"); you may not use this file except in compliance
- *  with the License. You may obtain a copy of the License at
+ * Licensed to The Apereo Foundation under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
  *
- *  http://www.osedu.org/licenses/ECL-2.0
  *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an "AS IS"
- *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- *  or implied. See the License for the specific language governing
- *  permissions and limitations under the License.
+ * The Apereo Foundation licenses this file to you under the Educational
+ * Community License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at:
+ *
+ *   http://opensource.org/licenses/ecl2.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  *
  */
+
 package org.opencastproject.kernel.rest;
 
 import org.opencastproject.rest.RestConstants;
@@ -175,7 +181,7 @@ public class RestPublisher implements RestConstants {
     boolean jobProducer = Boolean.parseBoolean((String) ref.getProperty(SERVICE_JOBPRODUCER_PROPERTY));
     try {
       Dictionary<String, Object> props = new Hashtable<String, Object>();
-      props.put("contextId", RestConstants.HTTP_CONTEXT_ID);
+      props.put("httpContext.id", RestConstants.HTTP_CONTEXT_ID);
       props.put("alias", servicePath);
       props.put(SERVICE_TYPE_PROPERTY, serviceType);
       props.put(SERVICE_PATH_PROPERTY, servicePath);
@@ -381,7 +387,7 @@ public class RestPublisher implements RestConstants {
       if (classpath != null && alias != null) {
         Dictionary<String, String> props = new Hashtable<String, String>();
         props.put("alias", alias);
-        props.put("contextId", RestConstants.HTTP_CONTEXT_ID);
+        props.put("httpContext.id", RestConstants.HTTP_CONTEXT_ID);
 
         StaticResource servlet = new StaticResource(new StaticResourceClassLoader(bundle), classpath, alias,
                 welcomeFile);
@@ -389,7 +395,7 @@ public class RestPublisher implements RestConstants {
         // We use the newly added bundle's context to register this service, so when that bundle shuts down, it brings
         // down this servlet with it
         logger.debug("Registering servlet with alias {}", alias);
-        bundle.getBundleContext().registerService(Servlet.class.getName(), servlet, props);
+        componentContext.getBundleContext().registerService(Servlet.class.getName(), servlet, props);
       }
 
       return super.addingBundle(bundle, event);
