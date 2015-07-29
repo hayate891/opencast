@@ -36,7 +36,7 @@
     <bundle>mvn:org.apache.commons/com.springsource.org.apache.commons.beanutils/1.7.0</bundle>
     <bundle>mvn:org.apache.commons/commons-compress/${commons-compress.version}</bundle>
     <bundle>mvn:org.apache.commons/commons-csv/1.0</bundle>
-    <bundle>mvn:org.apache.cxf/cxf-bundle-jaxrs/2.2.9</bundle>
+    <bundle>mvn:org.apache.cxf/cxf-bundle-jaxrs/2.2.10</bundle>
     <bundle>mvn:org.apache.httpcomponents/httpclient-osgi/4.3.6</bundle>
     <bundle>mvn:org.apache.httpcomponents/httpcore-osgi/4.3.3</bundle>
     <bundle>mvn:org.apache.neethi/neethi/3.0.1</bundle>
@@ -56,21 +56,21 @@
     <bundle>wrap:mvn:com.googlecode.json-simple/json-simple/${json-simple.version}</bundle>
 
     <!-- Spring Framework / Security -->
-    <bundle>mvn:org.springframework.osgi/spring-osgi-core/1.2.1</bundle>
-    <bundle>mvn:org.springframework.osgi/spring-osgi-extender/1.2.1</bundle>
-    <bundle>mvn:org.springframework.osgi/spring-osgi-io/1.2.1</bundle>
-    <bundle>mvn:org.springframework.security/spring-security-config/3.1.0.RELEASE</bundle>
-    <bundle>mvn:org.springframework.security/spring-security-core/3.1.0.RELEASE</bundle>
-    <bundle>mvn:org.springframework.security/spring-security-web/3.1.0.RELEASE</bundle>
-    <bundle>mvn:org.springframework/spring-aop/3.1.0.RELEASE</bundle>
-    <bundle>mvn:org.springframework/spring-asm/3.1.0.RELEASE</bundle>
-    <bundle>mvn:org.springframework/spring-beans/3.1.0.RELEASE</bundle>
-    <bundle>mvn:org.springframework/spring-context-support/3.1.0.RELEASE</bundle>
-    <bundle>mvn:org.springframework/spring-context/3.1.0.RELEASE</bundle>
-    <bundle>mvn:org.springframework/spring-core/3.1.0.RELEASE</bundle>
-    <bundle>mvn:org.springframework/spring-expression/3.1.0.RELEASE</bundle>
-    <bundle>mvn:org.springframework/spring-tx/3.1.0.RELEASE</bundle>
-    <bundle>mvn:org.springframework/spring-web/3.1.0.RELEASE</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-aop/4.0.7.RELEASE_2</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-beans/4.0.7.RELEASE_2</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-context/4.0.7.RELEASE_2</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-context-support/4.0.7.RELEASE_2</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-core/4.0.7.RELEASE_2</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-expression/4.0.7.RELEASE_2</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-tx/4.0.7.RELEASE_2</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-web/4.0.7.RELEASE_2</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-webmvc/4.0.7.RELEASE_2</bundle>
+    <bundle>mvn:org.eclipse.gemini/org.eclipse.gemini.blueprint.core/2.0.0.M02</bundle>
+    <bundle>mvn:org.eclipse.gemini/org.eclipse.gemini.blueprint.extender/2.0.0.M02</bundle>
+    <bundle>mvn:org.eclipse.gemini/org.eclipse.gemini.blueprint.io/2.0.0.M02</bundle>
+    <bundle>mvn:org.springframework.security/spring-security-config/4.0.2.RELEASE</bundle>
+    <bundle>mvn:org.springframework.security/spring-security-core/4.0.2.RELEASE</bundle>
+    <bundle>mvn:org.springframework.security/spring-security-web/4.0.2.RELEASE</bundle>
 
     <!-- EclipseLink -->
     <bundle>mvn:org.eclipse.persistence/org.eclipse.persistence.core/2.0.2</bundle>

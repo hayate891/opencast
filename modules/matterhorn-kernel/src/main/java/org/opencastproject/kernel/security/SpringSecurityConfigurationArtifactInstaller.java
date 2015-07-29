@@ -31,7 +31,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
+import org.eclipse.gemini.blueprint.context.support.OsgiBundleXmlApplicationContext;
 
 import java.io.File;
 import java.util.Dictionary;
