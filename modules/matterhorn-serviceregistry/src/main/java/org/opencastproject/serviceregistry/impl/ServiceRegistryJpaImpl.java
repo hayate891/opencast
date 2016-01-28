@@ -2857,23 +2857,31 @@ public class ServiceRegistryJpaImpl implements ServiceRegistry, ManagedService {
    * Comparator that will sort jobs according to their status. Those that were restarted are on top, those that are
    * queued are next.
    */
-  private static final class DispatchableComparator implements Comparator<Job> {
+  protected static final class DispatchableComparator implements Comparator<Job> {
 
     @Override
     public int compare(Job jobA, Job jobB) {
 
       // Jobs that are in "restart" mode should be handled first
       if (Job.Status.RESTART.equals(jobA.getStatus()) && !Job.Status.RESTART.equals(jobB.getStatus())) {
-        return 1;
-      } else if (Job.Status.RESTART.equals(jobB.getStatus()) && !Job.Status.RESTART.equals(jobA.getStatus())) {
         return -1;
+      } else if (Job.Status.RESTART.equals(jobB.getStatus()) && !Job.Status.RESTART.equals(jobA.getStatus())) {
+        return 1;
       }
 
       // Regular jobs should be processed prior to workflow and workflow operation jobs
       if (TYPE_WORKFLOW.equals(jobA.getJobType()) && !TYPE_WORKFLOW.equals(jobB.getJobType())) {
-        return -1;
-      } else if (TYPE_WORKFLOW.equals(jobB.getJobType()) && !TYPE_WORKFLOW.equals(jobA.getJobType())) {
         return 1;
+      } else if (TYPE_WORKFLOW.equals(jobB.getJobType()) && !TYPE_WORKFLOW.equals(jobA.getJobType())) {
+        return -1;
+      }
+
+      // Use created date
+      if (jobA.getDateCreated() != null && jobB.getDateCreated() != null) {
+        if (jobA.getDateCreated().getTime() < jobB.getDateCreated().getTime())
+          return -1;
+        else if (jobA.getDateCreated().getTime() > jobB.getDateCreated().getTime())
+          return 1;
       }
 
       // undecided
