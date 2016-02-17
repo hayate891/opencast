@@ -2857,7 +2857,7 @@ public class ServiceRegistryJpaImpl implements ServiceRegistry, ManagedService {
    * Comparator that will sort jobs according to their status. Those that were restarted are on top, those that are
    * queued are next.
    */
-  protected static final class DispatchableComparator implements Comparator<Job> {
+  static final class DispatchableComparator implements Comparator<Job> {
 
     @Override
     public int compare(Job jobA, Job jobB) {
