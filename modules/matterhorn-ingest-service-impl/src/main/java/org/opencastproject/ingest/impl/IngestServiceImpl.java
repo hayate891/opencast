@@ -188,10 +188,10 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
   protected String defaultWorkflowDefinionId;
 
   /** The default is to overwrite series catalog on ingest */
-  protected Boolean defaultIsOverWriteSeries = Boolean.TRUE;
+  protected boolean defaultIsOverWriteSeries = true;
 
   /** Option to overwrite series on ingest */
-  protected Boolean isOverwriteSeries = defaultIsOverWriteSeries;
+  protected boolean isOverwriteSeries = defaultIsOverWriteSeries;
 
   /**
    * Creates a new ingest service instance.
@@ -237,7 +237,7 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
   public void updated(Dictionary properties) throws ConfigurationException {
     // try to get overwrite series option from config, use default if not configured
     try {
-      isOverwriteSeries = Boolean.valueOf(((String) properties.get(PROPKEY_OVERWRITE_SERIES)).trim());
+      isOverwriteSeries = Boolean.parseBoolean(((String) properties.get(PROPKEY_OVERWRITE_SERIES)).trim());
     } catch (Exception e) {
       isOverwriteSeries = defaultIsOverWriteSeries;
       logger.warn("Unable to update configuration. {}", e.getMessage());
