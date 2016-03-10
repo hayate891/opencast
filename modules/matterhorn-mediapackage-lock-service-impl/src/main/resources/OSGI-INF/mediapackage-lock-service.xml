@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:components xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0">
+	<scr:component
+		name="org.opencastproject.mediapackage.lock.MediaPackageLockManagerImpl"
+		immediate="true" activate="activate">
+		<implementation
+			class="org.opencastproject.mediapackage.lock.MediaPackageLockManagerImpl" />
+		<property name="service.description" value="Media Package Lock Manager" />
+		<service>
+			<provide interface="org.opencastproject.mediapackage.lock.api.MediaPackageLockManager" />
+		</service>
+		<!-- No bind(): The lock manager only needs to know when requesters go down, so locks can be freed up -->
+		<reference name="lockRequester"
+			interface="org.opencastproject.mediapackage.lock.api.MediaPackageLockRequester"
+			cardinality="0..n" policy="dynamic" 
+			unbind="unsetMediaPackageLockRequester" />
+	</scr:component>
+</scr:components>
