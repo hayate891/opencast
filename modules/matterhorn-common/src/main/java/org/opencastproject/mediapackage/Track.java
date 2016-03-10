@@ -44,6 +44,11 @@ public interface Track extends MediaPackageElement {
   boolean hasAudio();
 
   /**
+   * Returns <code>true</code> if the track is a live track.
+   */
+  boolean isLive();
+
+  /**
    * Returns <code>true</code> if the track features a video stream.
    *
    * @return <code>true</code> if the track has a video stream

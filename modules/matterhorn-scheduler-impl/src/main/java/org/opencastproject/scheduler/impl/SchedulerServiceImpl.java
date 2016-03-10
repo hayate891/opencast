@@ -22,6 +22,8 @@ import static org.opencastproject.scheduler.impl.Util.setEventIdentifierImmutabl
 import static org.opencastproject.scheduler.impl.Util.setEventIdentifierMutable;
 import static org.opencastproject.util.data.Tuple.tuple;
 
+import org.opencastproject.live.api.LiveException;
+import org.opencastproject.live.api.LiveService;
 import org.opencastproject.mediapackage.Catalog;
 import org.opencastproject.mediapackage.EName;
 import org.opencastproject.mediapackage.MediaPackage;
@@ -42,7 +44,10 @@ import org.opencastproject.scheduler.api.SchedulerException;
 import org.opencastproject.scheduler.api.SchedulerQuery;
 import org.opencastproject.scheduler.api.SchedulerQuery.Sort;
 import org.opencastproject.scheduler.api.SchedulerService;
+import org.opencastproject.security.api.Organization;
+import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.security.api.UnauthorizedException;
+import org.opencastproject.security.api.User;
 import org.opencastproject.series.api.SeriesService;
 import org.opencastproject.util.NotFoundException;
 import org.opencastproject.util.data.Tuple;
@@ -128,8 +133,14 @@ public class SchedulerServiceImpl implements SchedulerService, ManagedService {
   /** Solr index for events */
   protected SchedulerServiceIndex index;
 
+  protected LiveService liveService;
+
+  /** #DCE MATT-1188-live-streaming The security service */
+  protected SecurityService securityService;
+
   /** Workspace */
   protected Workspace workspace;
+
 
   /**
    * Properties that are updated by ManagedService updated method
@@ -179,6 +190,26 @@ public class SchedulerServiceImpl implements SchedulerService, ManagedService {
    */
   public void setIndex(SchedulerServiceIndex index) {
     this.index = index;
+  }
+
+  /**
+   * OSGi callback for setting Live Service.
+   *
+   * @param service
+   *          the LiveService
+   */
+  public void setLiveService(LiveService service) {
+    this.liveService = service;
+  }
+
+  /**
+   * OSGi callback for setting Security Service.
+   *
+   * @param service
+   *          the SecurityService
+   */
+  public void setSecurityService(SecurityService service) {
+    this.securityService = service;
   }
 
   /**
@@ -363,6 +394,39 @@ public class SchedulerServiceImpl implements SchedulerService, ManagedService {
 
     // update the workflow
     workflowService.update(workflow);
+
+    // update the live media package
+    updateLiveMediaPackage(workflow);
+  }
+
+  /**
+   * Updates the live media package in the search index if there.
+   *
+   * @param workflow
+   */
+  private void updateLiveMediaPackage(final WorkflowInstance workflow) {
+    // Update LIVE media package in search index if there (asynchronously)
+    final User user = securityService.getUser();
+    final Organization org = securityService.getOrganization();
+    final SecurityService ss = securityService;
+    final MediaPackage mp = workflow.getMediaPackage();
+
+    new Thread() {
+      @Override
+      public void run() {
+        try {
+          // Set security context for this thread
+          ss.setOrganization(org);
+          ss.setUser(user);
+          logger.debug("About to update LIVE media package {}", mp.getIdentifier().toString());
+          liveService.updateMediaPackage(workflow);
+          logger.debug("LIVE media package {} updated", mp.getIdentifier().toString());
+        } catch (LiveException e) {
+          // Just log because the inability to update the search index should not impact scheduling...
+          logger.warn("Unable to update LIVE media package: {}", e.getMessage());
+        }
+      }
+    }.start();
   }
 
   /**

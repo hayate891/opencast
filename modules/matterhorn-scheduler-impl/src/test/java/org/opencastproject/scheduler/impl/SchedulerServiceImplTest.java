@@ -44,6 +44,7 @@ import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.data.Tuple.tuple;
 
+import org.opencastproject.live.api.LiveService;
 import org.opencastproject.mediapackage.MediaPackage;
 import org.opencastproject.mediapackage.MediaPackageBuilderFactory;
 import org.opencastproject.metadata.dublincore.DCMIPeriod;
@@ -57,6 +58,9 @@ import org.opencastproject.scheduler.api.SchedulerQuery;
 import org.opencastproject.scheduler.endpoint.SchedulerRestService;
 import org.opencastproject.scheduler.impl.persistence.SchedulerServiceDatabaseImpl;
 import org.opencastproject.scheduler.impl.solr.SchedulerServiceSolrIndex;
+import org.opencastproject.security.api.Organization;
+import org.opencastproject.security.api.SecurityService;
+import org.opencastproject.security.api.User;
 import org.opencastproject.series.api.SeriesService;
 import org.opencastproject.util.NotFoundException;
 import org.opencastproject.util.PathSupport;
@@ -122,6 +126,9 @@ public class SchedulerServiceImplTest {
   private SeriesService seriesService;
   private Workspace workspace;
 
+  private SecurityService securityService;
+  private LiveService liveService;
+
   private String persistenceStorage;
   private SchedulerServiceImpl schedSvc;
   private DublinCoreCatalogService dcSvc;
@@ -136,8 +143,8 @@ public class SchedulerServiceImplTest {
 
   private String seriesIdentifier;
 
-  private Map<String, String> wfProperties = new HashMap<String, String>();
-  private Map<String, String> wfPropertiesUpdated = new HashMap<String, String>();
+  private final Map<String, String> wfProperties = new HashMap<String, String>();
+  private final Map<String, String> wfPropertiesUpdated = new HashMap<String, String>();
 
   @SuppressWarnings("unchecked")
   @Before
@@ -203,7 +210,16 @@ public class SchedulerServiceImplTest {
             workspace.put((String) EasyMock.anyObject(), (String) EasyMock.anyObject(), (String) EasyMock.anyObject(),
                     (InputStream) EasyMock.anyObject())).andReturn(new URI("http://localhost:8080/test")).anyTimes();
 
-    EasyMock.replay(workflowService, seriesService, workspace);
+    securityService = EasyMock.createNiceMock(SecurityService.class);
+    User user = EasyMock.createNiceMock(User.class);
+    Organization org = EasyMock.createNiceMock(Organization.class);
+    EasyMock.replay(user, org);
+    EasyMock.expect(securityService.getUser()).andReturn(user);
+    EasyMock.expect(securityService.getOrganization()).andReturn(org);
+    liveService = EasyMock.createNiceMock(LiveService.class);
+    liveService.updateMediaPackage((WorkflowInstance) EasyMock.anyObject());
+
+    EasyMock.replay(workflowService, seriesService, workspace, securityService, liveService);
 
     schedSvc = new SchedulerServiceImpl();
 
@@ -213,6 +229,8 @@ public class SchedulerServiceImplTest {
     schedSvc.setIndex(index);
     schedSvc.setPersistence(schedulerDatabase);
     schedSvc.setWorkspace(workspace);
+    schedSvc.setSecurityService(securityService);
+    schedSvc.setLiveService(liveService);
 
     schedSvc.activate(null);
   }

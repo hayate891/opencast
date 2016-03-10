@@ -25,8 +25,13 @@ import org.opencastproject.mediapackage.Track;
 import org.opencastproject.mediapackage.VideoStream;
 import org.opencastproject.util.Checksum;
 import org.opencastproject.util.MimeType;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -34,9 +39,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class is the base implementation for a media track, which itself is part of a media package, representing e. g.
@@ -59,6 +61,9 @@ public class TrackImpl extends AbstractMediaPackageElement implements Track {
 
   @XmlElement(name = "video")
   protected List<VideoStream> video = new ArrayList<VideoStream>();
+
+  @XmlElement(name = "live")
+  protected boolean live;
 
   /** Needed by JAXB */
   public TrackImpl() {
@@ -120,6 +125,24 @@ public class TrackImpl extends AbstractMediaPackageElement implements Track {
   @Override
   public Long getDuration() {
     return duration;
+  }
+
+  /**
+   * Sets if the track is live streamed
+   *
+   * @param live
+   *          indicates if this is a live track
+   */
+  public void setLive(boolean isLive) {
+    this.live = isLive;
+  }
+
+  /**
+   * @see org.opencastproject.mediapackage.Track#isLive()
+   */
+  @Override
+  public boolean isLive() {
+    return this.live;
   }
 
   @Override
@@ -195,6 +218,9 @@ public class TrackImpl extends AbstractMediaPackageElement implements Track {
       durationNode.appendChild(document.createTextNode(Long.toString(duration)));
       node.appendChild(durationNode);
     }
+    Node liveNode = document.createElement("live");
+    liveNode.appendChild(document.createTextNode(Boolean.toString(live)));
+    node.appendChild(liveNode);
 
     for (Stream s : audio)
       node.appendChild(s.toManifest(document, serializer));
@@ -208,6 +234,7 @@ public class TrackImpl extends AbstractMediaPackageElement implements Track {
    *
    * @see org.opencastproject.mediapackage.Track#getDescription()
    */
+  @Override
   public String getDescription() {
     StringBuffer buf = new StringBuffer("");
     /*
@@ -238,10 +265,12 @@ public class TrackImpl extends AbstractMediaPackageElement implements Track {
   // }
 
   public static class Adapter extends XmlAdapter<TrackImpl, Track> {
+    @Override
     public TrackImpl marshal(Track mp) throws Exception {
       return (TrackImpl) mp;
     }
 
+    @Override
     public Track unmarshal(TrackImpl mp) throws Exception {
       return mp;
     }

@@ -143,10 +143,11 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
   public static final String INGEST_CATALOG_FROM_URI = "uri-catalog";
 
   /** Ingest can only occur for a workflow currently in one of these operations. */
-  public static final String[] PRE_PROCESSING_OPERATIONS = new String[] { "schedule", "capture", "ingest" };
+  public static final String[] PRE_PROCESSING_OPERATIONS = new String[] { "publish-live", "schedule", "capture",
+          "ingest", "retract-live" };
 
   /** The JMX business object for ingest statistics */
-  private IngestStatistics ingestStatistics = new IngestStatistics();
+  private final IngestStatistics ingestStatistics = new IngestStatistics();
 
   /** The JMX bean object instance */
   private ObjectInstance registerMXBean;
@@ -281,6 +282,7 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
    *
    * @see org.opencastproject.ingest.api.IngestService#addZippedMediaPackage(java.io.InputStream)
    */
+  @Override
   public WorkflowInstance addZippedMediaPackage(InputStream zipStream) throws IngestException, IOException,
           MediaPackageException {
     try {
@@ -295,6 +297,7 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
    *
    * @see org.opencastproject.ingest.api.IngestService#addZippedMediaPackage(java.io.InputStream, java.lang.String)
    */
+  @Override
   public WorkflowInstance addZippedMediaPackage(InputStream zipStream, String wd) throws MediaPackageException,
           IOException, IngestException, NotFoundException {
     return addZippedMediaPackage(zipStream, wd, null);
@@ -305,6 +308,7 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
    *
    * @see org.opencastproject.ingest.api.IngestService#addZippedMediaPackage(java.io.InputStream, java.lang.String)
    */
+  @Override
   public WorkflowInstance addZippedMediaPackage(InputStream zipStream, String wd, Map<String, String> workflowConfig)
           throws MediaPackageException, IOException, IngestException, NotFoundException {
     try {
@@ -548,6 +552,7 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
    *
    * @see org.opencastproject.ingest.api.IngestService#createMediaPackage()
    */
+  @Override
   public MediaPackage createMediaPackage() throws MediaPackageException,
           org.opencastproject.util.ConfigurationException, HandleException {
     MediaPackage mediaPackage;
@@ -784,6 +789,7 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
    * @see org.opencastproject.ingest.api.IngestService#addAttachment(java.net.URI,
    *      org.opencastproject.mediapackage.MediaPackageElementFlavor, org.opencastproject.mediapackage.MediaPackage)
    */
+  @Override
   public MediaPackage addAttachment(URI uri, MediaPackageElementFlavor flavor, MediaPackage mediaPackage)
           throws IOException, IngestException {
     Job job = null;
@@ -821,6 +827,7 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
    * @see org.opencastproject.ingest.api.IngestService#addAttachment(java.io.InputStream, java.lang.String,
    *      org.opencastproject.mediapackage.MediaPackageElementFlavor, org.opencastproject.mediapackage.MediaPackage)
    */
+  @Override
   public MediaPackage addAttachment(InputStream in, String fileName, MediaPackageElementFlavor flavor,
           MediaPackage mediaPackage) throws IOException, IngestException {
     Job job = null;
@@ -906,6 +913,7 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
    * @see org.opencastproject.ingest.api.IngestService#ingest(org.opencastproject.mediapackage.MediaPackage,
    *      java.lang.String, java.util.Map, java.lang.Long)
    */
+  @Override
   public WorkflowInstance ingest(MediaPackage mp, String workflowDefinitionId, Map<String, String> properties,
           Long workflowInstanceId) throws IngestException, NotFoundException, UnauthorizedException {
 
@@ -984,9 +992,9 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
         workflowInstance = workflowService.start(workflowDef, mp, properties);
       } else {
         // Ensure that we're in one of the pre-processing operations
-        // The pre-processing workflow contains three operations: schedule, capture, and ingest. If we are not in the
-        // last operation of the preprocessing workflow (due to the capture agent not reporting on its recording
-        // status), we need to advance the workflow.
+        // The pre-processing workflow contains five operations: publish-live, schedule, capture, ingest, and
+        // retract-live. If we are not in the last operation of the preprocessing workflow (due to the capture
+        // agent not reporting on its recording status), we need to advance the workflow.
         WorkflowOperationInstance currentOperation = workflow.getCurrentOperation();
         if (currentOperation == null) {
           ingestStatistics.failed();
@@ -1046,10 +1054,13 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
         // Extend the workflow operations
         workflow.extend(workflowDef);
 
-        // Advance the workflow
+        // Advance the workflow to the next operation after capture
         int currentPosition = workflow.getOperations().indexOf(currentOperation);
         while (currentPosition < preProcessingOperations - 1) {
           currentOperation = workflow.getCurrentOperation();
+          // Need to advance the workflow to the 'ingest' operation
+          if ("ingest".equals(currentOperation.getTemplate()))
+            break;
           logger.debug("Advancing workflow (skipping {})", currentOperation);
           if (currentOperation.getId() != null) {
             try {

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mediapackage start="2015-02-26T19:29:00Z" id="0ebf2138-3f8c-4454-8e01-4ff109a6681e"
+	xmlns="http://mediapackage.opencastproject.org" duration="60000">
+	<title>Lecture 8</title>
+	<series>20150229999</series>
+	<seriestitle>Test Course</seriestitle>
+	<creators>
+		<creator>Rute Santos</creator>
+	</creators>
+	<media>
+		<track id="track-1" type="track/presentation">
+			<mimetype>video/quicktime</mimetype>
+			<url>vonly.mov</url>
+			<checksum type="md5">43b7d843b02c4a429b2f547a4f230d31</checksum>
+			<duration>1004400000</duration>
+			<video>
+				<device type="UFG03" version="30112007" vendor="Unigraf" />
+				<encoder type="H.264" version="7.4" vendor="Apple Inc" />
+				<resolution>640x480</resolution>
+				<scanType type="progressive" />
+				<bitrate>540520</bitrate>
+				<frameRate>2</frameRate>
+			</video>
+		</track>
+		<track id="track-2" type="track/presenter">
+			<mimetype>video/quicktime</mimetype>
+			<url>aonly.mov</url>
+			<checksum type="md5">950f9fa49caa8f1c5bbc36892f6fd062</checksum>
+			<duration>1004400000</duration>
+			<audio>
+				<device type="UFG03" version="30112007" vendor="Unigraf" />
+				<encoder type="AAC" version="7.4" vendor="Apple Inc" />
+				<channels>2</channels>
+				<bitdepth>16</bitdepth>
+				<samplingrate>44100</samplingrate>
+			</audio>
+		</track>
+	</media>
+	<metadata>
+		<catalog type="dublincore/series" id="series-dc">
+			<mimetype>text/xml</mimetype>
+			<url>episode_dublincore.xml</url>
+		</catalog>
+		<catalog type="dublincore/episode" id="episode-dc">
+			<mimetype>text/xml</mimetype>
+			<url>series_dublincore.xml</url>
+		</catalog>
+	</metadata>
+	<attachments>
+		<attachment type="security/xacml" id="security-policy">
+			<url>xacml.xml</url>
+		</attachment>
+	</attachments>
+</mediapackage>

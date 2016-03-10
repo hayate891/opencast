@@ -59,6 +59,11 @@
         <module>modules/matterhorn-json</module>
         <module>modules/matterhorn-kernel</module>
         <module>modules/matterhorn-lti</module>
+        <module>modules/matterhorn-live-api</module>
+        <module>modules/matterhorn-live-impl</module>
+        <module>modules/matterhorn-live-workflowoperation</module>
+        <module>modules/matterhorn-mediapackage-lock-service-api</module>
+        <module>modules/matterhorn-mediapackage-lock-service-impl</module>
         <module>modules/matterhorn-mediapackage-manipulator</module>
         <module>modules/matterhorn-mediapackage-ui</module>
         <module>modules/matterhorn-metadata-api</module>

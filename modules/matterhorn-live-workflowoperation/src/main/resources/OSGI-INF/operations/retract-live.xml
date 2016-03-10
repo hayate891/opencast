@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0"
+ name="org.opencastproject.live.workflowoperation.RetractLiveWorkflowOperationHandler" immediate="true" activate="activate">
+  <implementation class="org.opencastproject.live.workflowoperation.RetractLiveWorkflowOperationHandler" />
+  <property name="service.description" value="Retract Live Publication Workflow Handler" />
+  <property name="workflow.operation" value="retract-live" />
+  <service>
+    <provide interface="org.opencastproject.workflow.api.WorkflowOperationHandler" />
+  </service>
+  <reference name="ServiceRegistry" cardinality="1..1" interface="org.opencastproject.serviceregistry.api.ServiceRegistry"
+    policy="static" bind="setServiceRegistry" />
+  <reference cardinality="1..1" interface="org.opencastproject.live.api.LiveService"
+    name="LiveService" policy="static" bind="setLiveService"/> 
+</scr:component>

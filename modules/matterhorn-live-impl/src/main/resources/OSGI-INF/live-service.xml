@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:components xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0">
+	<scr:component name="org.opencastproject.live.impl.LiveServiceImpl"
+		immediate="true" activate="activate">
+		<implementation class="org.opencastproject.live.impl.LiveServiceImpl" />
+		<property name="service.description" value="Live Service" />
+		<service>
+			<provide interface="org.opencastproject.live.api.LiveService" />
+		</service>
+		<reference cardinality="1..1"
+			interface="org.opencastproject.distribution.api.DownloadDistributionService"
+			name="DownloadDistributionService" policy="static"
+			target="(distribution.channel=download)"
+			bind="setDownloadDistributionService" />
+		<reference name="DublinCoreCatalogService" cardinality="1..1"
+			interface="org.opencastproject.metadata.dublincore.DublinCoreCatalogService"
+			policy="static" bind="setDublinCoreService" />
+		<reference cardinality="1..1"
+			interface="org.opencastproject.search.api.SearchService" name="SearchService"
+			policy="static" bind="setSearchService" />
+		<reference name="ServiceRegistry" cardinality="1..1"
+			interface="org.opencastproject.serviceregistry.api.ServiceRegistry"
+			policy="static" bind="setServiceRegistry" />
+		<reference name="WorkflowService" cardinality="1..1"
+			interface="org.opencastproject.workflow.api.WorkflowService" policy="static"
+			bind="setWorkflowService" />
+		<reference name="SecurityService" cardinality="1..1"
+			interface="org.opencastproject.security.api.SecurityService" policy="static"
+			bind="setSecurityService" />
+		<reference name="Workspace" cardinality="1..1"
+			interface="org.opencastproject.workspace.api.Workspace" policy="static"
+			bind="setWorkspace" />
+		<reference name="MediaPackageLockManager" cardinality="1..1"
+			interface="org.opencastproject.mediapackage.lock.api.MediaPackageLockManager" policy="static"
+			bind="setMediaPackageLockManager" />
+	</scr:component>
+</scr:components>

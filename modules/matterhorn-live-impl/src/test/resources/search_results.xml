@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<search-results xmlns="http://search.opencastproject.org"
+    xmlns:ns2="http://mediapackage.opencastproject.org" searchTime="14" total="1" limit="1"
+    offset="0">
+    <query>(id:0ebf2138\-3f8c\-4454\-8e01\-4ff109a6681e) AND oc_organization:mh_default_org AND
+        (oc_acl_read:ROLE_ADMIN OR oc_acl_read:ROLE_USER OR oc_acl_read:MATTERHORN_ADMINISTRATOR OR
+        oc_acl_read:ROLE_OAUTH_USER OR oc_acl_read:ROLE_ANONYMOUS) AND -oc_mediatype:Series AND
+        -oc_deleted:[* TO *]</query>
+    <result org="mh_default_org" id="0ebf2138-3f8c-4454-8e01-4ff109a6681e">
+        <ns2:mediapackage start="2015-02-26T19:29:00Z" ns2:xmlns="http://mediapackage.opencastproject.org"
+            id="0ebf2138-3f8c-4454-8e01-4ff109a6681e" duration="60000">
+            <ns2:title>Lecture 8</ns2:title>
+            <ns2:series>20150229999</ns2:series>
+            <ns2:seriestitle>Test Course</ns2:seriestitle>
+            <ns2:creators>
+                <ns2:creator>Rute Santos</ns2:creator>
+            </ns2:creators>
+            <ns2:media>
+                <ns2:track type="presenter/delivery" id="live-presenter">
+                    <ns2:mimetype>video/x-flv</ns2:mimetype>
+                    <ns2:live>true</ns2:live>
+                    <ns2:url>rtmp://streaming.harvard.edu/live/live-presenter-presenter-delivery </ns2:url>
+                    <ns2:duration>300000</ns2:duration>
+                    <ns2:video id="video-presenter-delivery">
+                        <ns2:resolution>1920x1080</ns2:resolution>
+                    </ns2:video>
+                </ns2:track>
+                <ns2:track type="presentation/delivery" id="live-presentation">
+                    <ns2:mimetype>video/x-flv</ns2:mimetype>
+                    <ns2:live>true</ns2:live>
+                    <ns2:url>rtmp://streaming.harvard.edu/live/live-presentation-presentation-delivery </ns2:url>
+                    <ns2:duration>300000</ns2:duration>
+                    <ns2:video id="video-presentation-delivery">
+                        <ns2:resolution>1920x1080</ns2:resolution>
+                    </ns2:video>
+                </ns2:track>
+            </ns2:media>
+            <ns2:metadata>
+                <ns2:catalog type="dublincore/series" id="series-dc-published">
+                    <ns2:mimetype>text/xml</ns2:mimetype>
+                    <ns2:url>static/series_dublincore.xml</ns2:url>
+                </ns2:catalog>
+                <ns2:catalog type="dublincore/episode" id="episode-dc-published">
+                    <ns2:mimetype>text/xml</ns2:mimetype>
+                    <ns2:url>static/episode_dublincore.xml</ns2:url>
+                </ns2:catalog>
+            </ns2:metadata>
+            <ns2:attachments>
+                <ns2:attachment type="security/xacml" id="security-policy-published">
+                    <ns2:url>xacml.xml</ns2:url>
+                </ns2:attachment>
+            </ns2:attachments>
+        </ns2:mediapackage>
+        <dcExtent>-1</dcExtent>
+        <dcTitle>Lecture 8</dcTitle>
+        <dcCreator>Rute Santos</dcCreator>
+        <dcSpatial>dev-epiphan002</dcSpatial>
+        <dcLicense>Creative Commons 3.0: Attribution-NonCommercial-NoDerivs</dcLicense>
+        <ocMediapackage></ocMediapackage>
+        <mediaType>AudioVisual</mediaType>
+        <keywords/>
+        <modified>2015-03-10T16:29:13.926-04:00</modified>
+        <score>1.2595391</score>
+    </result>
+</search-results>

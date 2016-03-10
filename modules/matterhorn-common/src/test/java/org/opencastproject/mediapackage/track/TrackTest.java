@@ -90,6 +90,14 @@ public class TrackTest {
   }
 
   /**
+   * Test method for {@link org.opencastproject.mediapackage.track.TrackImpl#setLive(String)}.
+   */
+  public void testSetlive() {
+    track.setLive(true);
+    assertEquals(true, track.isLive());
+  }
+
+  /**
    * Test method for {@link org.opencastproject.mediapackage.track.TrackImpl#getDuration()}.
    */
   @Test
@@ -140,6 +148,7 @@ public class TrackTest {
   @Test
   public void testFlavorMarshalling() throws Exception {
     track.setFlavor(MediaPackageElements.PRESENTATION_SOURCE);
+    track.setLive(true);
     JAXBContext context = JAXBContext.newInstance(
             "org.opencastproject.mediapackage:org.opencastproject.mediapackage.track",
             MediaPackage.class.getClassLoader());
@@ -151,17 +160,19 @@ public class TrackTest {
     try {
       TrackImpl t1 = unmarshaller.unmarshal(new StreamSource(inputStream), TrackImpl.class).getValue();
       Assert.assertEquals(MediaPackageElements.PRESENTATION_SOURCE, t1.getFlavor());
+      Assert.assertEquals(true, t1.isLive());
     } finally {
       IoSupport.closeQuietly(inputStream);
     }
 
     // Now again without namespaces
-    String xml = "<oc:track xmlns:oc=\"http://mediapackage.opencastproject.org\" type=\"presentation/source\"><oc:tags/><oc:url>http://downloads.opencastproject.org/media/movie.m4v</oc:url><oc:duration>-1</oc:duration></oc:track>";
+    String xml = "<oc:track xmlns:oc=\"http://mediapackage.opencastproject.org\" type=\"presentation/source\"><oc:tags/><oc:url>http://downloads.opencastproject.org/media/movie.m4v</oc:url><oc:duration>-1</oc:duration><oc:live>true</oc:live></oc:track>";
     inputStream = IOUtils.toInputStream(xml);
     try {
       TrackImpl t2 = unmarshaller.unmarshal(new StreamSource(inputStream), TrackImpl.class).getValue();
       Assert.assertEquals(MediaPackageElements.PRESENTATION_SOURCE, t2.getFlavor());
       Assert.assertEquals("http://downloads.opencastproject.org/media/movie.m4v", t2.getURI().toString());
+      Assert.assertEquals(true, t2.isLive());
     } finally {
       IoSupport.closeQuietly(inputStream);
     }
@@ -169,6 +180,7 @@ public class TrackTest {
     // Get the xml from the object itself
     String xmlFromTrack = MediaPackageElementParser.getAsXml(track);
     Assert.assertTrue(xmlFromTrack.contains(MediaPackageElements.PRESENTATION_SOURCE.toString()));
+    Assert.assertTrue(xmlFromTrack.replaceAll("\\b+", "").contains("<live>true</live>"));
 
     // And finally, using the element builder
     DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -177,6 +189,7 @@ public class TrackTest {
     Track t3 = (Track) MediaPackageElementBuilderFactory.newInstance().newElementBuilder()
             .elementFromManifest(doc.getDocumentElement(), new DefaultMediaPackageSerializerImpl());
     Assert.assertEquals(MediaPackageElements.PRESENTATION_SOURCE, t3.getFlavor());
+    Assert.assertEquals(true, t3.isLive());
     Assert.assertEquals("http://downloads.opencastproject.org/media/movie.m4v", t3.getURI().toURL().toExternalForm());
   }
 }

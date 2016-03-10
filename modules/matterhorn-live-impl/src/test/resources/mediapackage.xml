@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mediapackage start="2015-02-26T19:29:00Z" id="0ebf2138-3f8c-4454-8e01-4ff109a6681e"
+	xmlns="http://mediapackage.opencastproject.org" duration="60000">
+	<title>Lecture 8</title>
+	<series>20150229999</series>
+	<seriestitle>Test Course</seriestitle>
+	<creators>
+		<creator>Rute Santos</creator>
+	</creators>
+	<media />
+	<metadata>
+		<catalog type="dublincore/series" id="series-dc">
+			<mimetype>text/xml</mimetype>
+			<url>series_dublincore.xml</url>
+		</catalog>
+		<catalog type="dublincore/episode" id="episode-dc">
+			<mimetype>text/xml</mimetype>
+			<url>episode_dublincore.xml</url>
+		</catalog>
+	</metadata>
+	<attachments>
+		<attachment type="security/xacml" id="security-policy">
+			<url>xacml.xml</url>
+		</attachment>
+	</attachments>
+</mediapackage>

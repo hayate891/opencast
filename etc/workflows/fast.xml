@@ -17,6 +17,17 @@
   <configuration_panel>
   <![CDATA[
     <fieldset>
+      <legend>Live</legend>
+      <ul class="oc-ui-checkbox-list-upload">
+	  <li class="ui-helper-clearfix">
+	    <span id="liveconfig">
+	      <input id="hasLive" name="hasLive" type="checkbox" checked="checked" class="configField holdCheckbox" />
+	      <span id="i18n_activate_live">&nbsp;Publish Live Stream</span>
+	    </span>
+	  </li>
+      </ul>
+    </fieldset>  
+    <fieldset>
       <legend>Holds</legend>
       <span>Processing should be paused to allow for:</span>
       <ul class="oc-ui-checkbox-list-upload">
@@ -68,6 +79,12 @@
           {key: 'org.opencastproject.workflow.config.trimHold'},
           {getValue: function(){ return this.fields.trimHold.is(":checked"); }
           });
+
+		components['org.opencastproject.workflow.config.hasLive'] = new ocAdmin.Component(
+          ['hasLive'],
+          {key: 'org.opencastproject.workflow.config.hasLive'},
+          {getValue: function(){ return this.fields.hasLive.is(":checked");}
+          });
           
         components['org.opencastproject.workflow.config.archiveOp'] = new ocAdmin.Component(
           ['archiveOp'],
@@ -84,6 +101,7 @@
       }
       ocWorkflowPanel.setComponentValues = function(values, components){
         components['org.opencastproject.workflow.config.trimHold'].setValue(values['org.opencastproject.workflow.config.trimHold']);
+        components['org.opencastproject.workflow.config.hasLive'].setValue(values['org.opencastproject.workflow.config.hasLive']);
         components['org.opencastproject.workflow.config.archiveOp'].setValue(values['org.opencastproject.workflow.config.archiveOp']);
         components['license'].setValue(values['license']);
       }

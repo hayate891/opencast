@@ -7,6 +7,8 @@
     ingesting it, after which processing operations may be added.
   </description>
   <operations>
+    <operation id="publish-live" fail-on-error="false" if="${hasLive}" 
+    	retry-strategy="retry" max-attempts="5" description="Publish Live" />
     <operation id="schedule" fail-on-error="true" description="Scheduled">
       <configurations>
         <configuration key="schedule.start">${schedule.start}</configuration>
@@ -16,5 +18,7 @@
     </operation>
     <operation id="capture" fail-on-error="true" description="Capture" />
     <operation id="ingest" fail-on-error="true" description="Ingest" />
+    <operation id="retract-live" fail-on-error="false" if="${hasLive}" 
+    	retry-strategy="retry" max-attempts="5" description="Retract Live" />
   </operations>
 </definition>
