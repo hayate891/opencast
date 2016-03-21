@@ -276,7 +276,9 @@ public class SolrIndexManager {
       SolrInputDocument episodeDocument = createEpisodeInputDocument(sourceMediaPackage, acl);
       Schema.setOcModified(episodeDocument, now);
 
-      SolrInputDocument seriesDocument = createSeriesInputDocument(sourceMediaPackage.getSeries(), acl);
+      // MH-10960 Do not pass acl, use the series acl instead
+      SolrInputDocument seriesDocument = createSeriesInputDocument(sourceMediaPackage.getSeries());
+
       if (seriesDocument != null)
         Schema.enrich(episodeDocument, seriesDocument);
 
@@ -321,7 +323,8 @@ public class SolrIndexManager {
     try {
       SolrInputDocument episodeDocument = createEpisodeInputDocument(sourceMediaPackage, acl);
 
-      SolrInputDocument seriesDocument = createSeriesInputDocument(sourceMediaPackage.getSeries(), acl);
+      // MH-10960 Do not pass acl, use the series acl instead
+      SolrInputDocument seriesDocument = createSeriesInputDocument(sourceMediaPackage.getSeries());
       if (seriesDocument != null)
         Schema.enrich(episodeDocument, seriesDocument);
 
@@ -703,7 +706,7 @@ public class SolrIndexManager {
    *          the access control list for this mediapackage
    * @return an input document ready to be posted to solr or null
    */
-  private SolrInputDocument createSeriesInputDocument(String seriesId, AccessControlList acl) throws IOException,
+  private SolrInputDocument createSeriesInputDocument(String seriesId) throws IOException,
           UnauthorizedException {
 
     if (seriesId == null)
@@ -748,8 +751,13 @@ public class SolrIndexManager {
     // DC fields
     addSeriesMetadata(doc, dc);
 
-    // Authorization
-    setAuthorization(doc, securityService, acl);
+    // MH-10960 Authorization is set with the series acl, not the media package acl
+    try {
+      AccessControlList acl = seriesService.getSeriesAccessControl(seriesId);
+      setAuthorization(doc, securityService, acl);
+    } catch (Exception e) {
+      logger.error("Error when getting the series acl for series: " + seriesId, e);
+    }
 
     return doc;
   }
@@ -961,6 +969,7 @@ public class SolrIndexManager {
     SortedSet<TextAnnotation> sortedAnnotations = null;
     if (!"".equals(Schema.getOcKeywords(doc))) {
       sortedAnnotations = new TreeSet<TextAnnotation>(new Comparator<TextAnnotation>() {
+        @Override
         public int compare(TextAnnotation a1, TextAnnotation a2) {
           if ((RELEVANCE_BOOST * a1.getRelevance() + a1.getConfidence()) > (RELEVANCE_BOOST * a2.getRelevance() + a2
                   .getConfidence()))
