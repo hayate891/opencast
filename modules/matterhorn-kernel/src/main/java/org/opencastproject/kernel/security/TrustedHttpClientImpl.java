@@ -120,7 +120,7 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
   protected Map<HttpResponse, HttpClient> responseMap = new ConcurrentHashMap<HttpResponse, HttpClient>();
 
   /** Used to add a random amount of time up to retryMaximumVariableTime to retry a request after a nonce timeout. */
-  private Random generator = new Random();
+  private final Random generator = new Random();
 
   /** Used to create HttpClients that are used to make http requests. */
   private HttpClientFactory httpClientFactory = null;
@@ -286,6 +286,7 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
           throws TrustedHttpClientException {
     final HttpClient httpClient = makeHttpClient();
     httpClient.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, connectionTimeout);
+    httpClient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, socketTimeout);
     // Add the request header to elicit a digest auth response
     httpUriRequest.setHeader(REQUESTED_AUTH_HEADER, DIGEST_AUTH);
     httpUriRequest.setHeader(SecurityConstants.AUTHORIZATION_HEADER, "true");
