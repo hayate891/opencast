@@ -162,9 +162,9 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
 
   /**
    * Sets the service registry.
-   *
+   * 
    * @param serviceRegistry
-   *         the serviceRegistry to set
+   *          the serviceRegistry to set
    */
   public void setServiceRegistry(ServiceRegistry serviceRegistry) {
     this.serviceRegistry = serviceRegistry;
@@ -172,9 +172,9 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
 
   /**
    * Sets the security service.
-   *
+   * 
    * @param securityService
-   *         the security service
+   *          the security service
    */
   public void setSecurityService(SecurityService securityService) {
     this.securityService = securityService;
@@ -182,9 +182,9 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
 
   /**
    * Extracts the number of times to retry a request after a nonce timeout.
-   *
+   * 
    * @param cc
-   *         The ComponentContent to extract this property from.
+   *          The ComponentContent to extract this property from.
    */
   private void getRetryNumber(ComponentContext cc) {
     nonceTimeoutRetries = getIntFromComponentContext(cc, NONCE_TIMEOUT_RETRY_KEY, DEFAULT_NONCE_TIMEOUT_RETRIES);
@@ -192,9 +192,9 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
 
   /**
    * Extracts the minimum amount of time in seconds to wait if there is a nonce timeout before retrying.
-   *
+   * 
    * @param cc
-   *         The ComponentContent to extract this property from.
+   *          The ComponentContent to extract this property from.
    */
   private void getRetryBaseTime(ComponentContext cc) {
     retryBaseDelay = getIntFromComponentContext(cc, NONCE_TIMEOUT_RETRY_BASE_TIME_KEY, DEFAULT_RETRY_BASE_TIME);
@@ -202,24 +202,24 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
 
   /**
    * Extracts the maximum amount of time in seconds that is added to the base time after a nonce timeout.
-   *
+   * 
    * @param cc
-   *         The ComponentContent to extract this property from.
+   *          The ComponentContent to extract this property from.
    */
   private void getRetryMaximumVariableTime(ComponentContext cc) {
     retryMaximumVariableTime = getIntFromComponentContext(cc, NONCE_TIMEOUT_RETRY_MAXIMUM_VARIABLE_TIME_KEY,
-                                                          DEFAULT_RETRY_MAXIMUM_VARIABLE_TIME);
+            DEFAULT_RETRY_MAXIMUM_VARIABLE_TIME);
   }
 
   /**
    * Gets a property from the ComponentContext that is the base type int.
-   *
+   * 
    * @param cc
-   *         The ComponentContext to get the property from.
+   *          The ComponentContext to get the property from.
    * @param key
-   *         The key to search the properties for to get the value back.
+   *          The key to search the properties for to get the value back.
    * @param defaultValue
-   *         The default value to set if the property is malformed or non-existant.
+   *          The default value to set if the property is malformed or non-existant.
    * @return The int property either as the value from the properties collection or the default value.
    */
   private int getIntFromComponentContext(ComponentContext cc, String key, int defaultValue) {
@@ -230,10 +230,10 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
     } catch (Exception e) {
       if (cc != null && cc.getBundleContext() != null && cc.getBundleContext().getProperty(key) != null) {
         logger.warn("Unable to get property with key " + key + " with value " + cc.getBundleContext().getProperty(key)
-                            + " so using default of " + defaultValue + " because of " + e.getMessage());
+                + " so using default of " + defaultValue + " because of " + e.getMessage());
       } else {
         logger.warn("Unable to get property with key " + key + " so using default of " + defaultValue + " because of "
-                            + e.getMessage());
+                + e.getMessage());
       }
       result = defaultValue;
     }
@@ -258,12 +258,15 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
   }
 
   /** Creates a new HttpClient to use to make requests. */
-  public HttpClient makeHttpClient() throws TrustedHttpClientException {
+  public HttpClient makeHttpClient(int connectionTimeout, int socketTimeout) throws TrustedHttpClientException {
     if (httpClientFactory == null) {
       throw new TrustedHttpClientException(new NullPointerException(
               "There is no DefaultHttpClientFactory service available so we cannot make a request"));
     }
-    return httpClientFactory.makeHttpClient();
+    HttpClient httpClient = httpClientFactory.makeHttpClient();
+    httpClient.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, connectionTimeout);
+    httpClient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, socketTimeout);
+    return httpClient;
   }
 
   @Override
@@ -273,7 +276,7 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
 
   /**
    * {@inheritDoc}
-   *
+   * 
    * @see org.opencastproject.security.api.TrustedHttpClient#execute(org.apache.http.client.methods.HttpUriRequest)
    */
   @Override
@@ -284,8 +287,7 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
   @Override
   public HttpResponse execute(HttpUriRequest httpUriRequest, int connectionTimeout, int socketTimeout)
           throws TrustedHttpClientException {
-    final HttpClient httpClient = makeHttpClient();
-    httpClient.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, connectionTimeout);
+    final HttpClient httpClient = makeHttpClient(connectionTimeout, socketTimeout);
     // Add the request header to elicit a digest auth response
     httpUriRequest.setHeader(REQUESTED_AUTH_HEADER, DIGEST_AUTH);
     httpUriRequest.setHeader(SecurityConstants.AUTHORIZATION_HEADER, "true");
@@ -346,13 +348,13 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
 
   /**
    * Retries a request if the nonce timed out during the request.
-   *
+   * 
    * @param httpUriRequest
-   *         The request to be made that isn't a GET, those are handled automatically.
+   *          The request to be made that isn't a GET, those are handled automatically.
    * @param response
-   *         The response with the bad nonce timeout in it.
+   *          The response with the bad nonce timeout in it.
    * @return A new response for the request if it was successful without the nonce timing out again or just the same
-   * response it got if it ran out of attempts.
+   *         response it got if it ran out of attempts.
    * @throws TrustedHttpClientException
    * @throws IOException
    * @throws ClientProtocolException
@@ -363,7 +365,7 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
     httpUriRequest.removeHeaders(AUTHORIZATION_HEADER_NAME);
 
     for (int i = 0; i < nonceTimeoutRetries; i++) {
-      HttpClient httpClient = makeHttpClient();
+      HttpClient httpClient = makeHttpClient(DEFAULT_CONNECTION_TIMEOUT, DEFAULT_SOCKET_TIMEOUT);
       int variableDelay = 0;
       // Make sure that we have a variable delay greater than 0.
       if (retryMaximumVariableTime > 0) {
@@ -373,7 +375,7 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
       long totalDelay = (retryBaseDelay * MILLISECONDS_IN_SECONDS + variableDelay);
       if (totalDelay > 0) {
         logger.info("Sleeping " + totalDelay + "ms before trying request " + httpUriRequest.getURI()
-                            + " again due to a " + response.getStatusLine());
+                + " again due to a " + response.getStatusLine());
         try {
           Thread.sleep(totalDelay);
         } catch (InterruptedException e) {
@@ -393,9 +395,9 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
 
   /**
    * Determines if the nonce has timed out before a request could be performed.
-   *
+   * 
    * @param response
-   *         The response to test to see if it has timed out.
+   *          The response to test to see if it has timed out.
    * @return true if it has time out, false if it hasn't
    */
   private boolean hadNonceTimeoutResponse(HttpResponse response) {
@@ -405,13 +407,13 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
 
   /**
    * Handles the necessary handshake for digest authenticaion in the case where it isn't a GET operation.
-   *
+   * 
    * @param httpUriRequest
-   *         The request location to get the digest authentication for.
+   *          The request location to get the digest authentication for.
    * @param httpClient
-   *         The client to send the request through.
+   *          The client to send the request through.
    * @throws TrustedHttpClientException
-   *         Thrown if the client cannot be shutdown.
+   *           Thrown if the client cannot be shutdown.
    */
   private void manuallyHandleDigestAuthentication(HttpUriRequest httpUriRequest, HttpClient httpClient)
           throws TrustedHttpClientException {
@@ -447,7 +449,7 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
 
   @Override
   public <T> T execute(HttpUriRequest httpUriRequest, ResponseHandler<T> responseHandler, int connectionTimeout,
-                       int socketTimeout) throws TrustedHttpClientException {
+          int socketTimeout) throws TrustedHttpClientException {
     try {
       return responseHandler.handleResponse(execute(httpUriRequest, connectionTimeout, socketTimeout));
     } catch (IOException e) {
@@ -457,7 +459,7 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
 
   /**
    * {@inheritDoc}
-   *
+   * 
    * @see org.opencastproject.security.api.TrustedHttpClient#close(org.apache.http.HttpResponse)
    */
   @Override
@@ -474,9 +476,9 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
 
   /**
    * {@inheritDoc}
-   *
+   * 
    * @see org.opencastproject.security.api.TrustedHttpClient#execute(org.apache.http.client.methods.HttpUriRequest,
-   * org.apache.http.client.ResponseHandler)
+   *      org.apache.http.client.ResponseHandler)
    */
   @Override
   public <T> T execute(HttpUriRequest httpUriRequest, ResponseHandler<T> responseHandler)
@@ -486,13 +488,13 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
 
   /**
    * Perform a request, and extract the realm and nonce values
-   *
+   * 
    * @param request
-   *         The request to execute in order to obtain the realm and nonce
+   *          The request to execute in order to obtain the realm and nonce
    * @return A String[] containing the {realm, nonce}
    */
   protected String[] getRealmAndNonce(HttpRequestBase request) throws TrustedHttpClientException {
-    HttpClient httpClient = makeHttpClient();
+    HttpClient httpClient = makeHttpClient(DEFAULT_CONNECTION_TIMEOUT, DEFAULT_SOCKET_TIMEOUT);
     HttpResponse response;
     try {
       response = new HttpResponseWrapper(httpClient.execute(request));
@@ -517,7 +519,7 @@ public class TrustedHttpClientImpl implements TrustedHttpClient, HttpConnectionM
       }
     }
     httpClient.getConnectionManager().shutdown();
-    return new String[]{realm, nonce};
+    return new String[] { realm, nonce };
   }
 
   @Override

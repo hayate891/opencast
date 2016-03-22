@@ -41,6 +41,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
+import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpParams;
 import org.easymock.EasyMock;
 import org.easymock.IMocksControl;
@@ -284,16 +285,20 @@ public class TrustedHttpClientImplTest {
   public void successfullRequestResultsInNoRetries() throws ClientProtocolException, IOException {
     HttpPost httpPost = new HttpPost("http://localhost:8080/fake");
     HttpParams httpParams = createNiceMock(HttpParams.class);
+    expect(httpParams.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 60000)).andReturn(httpParams);
+    expect(httpParams.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 60000)).andReturn(httpParams);
+    replay(httpParams);
     ClientConnectionManager clientConnectionManager = createMock(ClientConnectionManager.class);
 
     // Setup DefaultHttpClients
     HttpClient securityDefaultHttpClient = createMock("Digest", HttpClient.class);
+    expect(securityDefaultHttpClient.getParams()).andReturn(httpParams).anyTimes();
     expect(securityDefaultHttpClient.execute(isA(HttpUriRequest.class))).andReturn(digestResponse);
     expect(securityDefaultHttpClient.getConnectionManager()).andReturn(clientConnectionManager);
     replay(securityDefaultHttpClient);
 
     HttpClient requestDefaultHttpClient = createMock("Request", HttpClient.class);
-    expect(requestDefaultHttpClient.getParams()).andReturn(httpParams);
+    expect(requestDefaultHttpClient.getParams()).andReturn(httpParams).anyTimes();
     expect(requestDefaultHttpClient.execute(isA(HttpUriRequest.class))).andReturn(okResponse);
     replay(requestDefaultHttpClient);
 
@@ -329,10 +334,13 @@ public class TrustedHttpClientImplTest {
 
     HttpPost httpPost = new HttpPost("http://localhost:8080/fake");
     HttpParams httpParams = createNiceMock(HttpParams.class);
+    expect(httpParams.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 60000)).andReturn(httpParams);
+    expect(httpParams.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 60000)).andReturn(httpParams);
+    replay(httpParams);
     ClientConnectionManager clientConnectionManager = createMock(ClientConnectionManager.class);
 
     HttpClient requestDefaultHttpClient = createMock("Request", HttpClient.class);
-    expect(requestDefaultHttpClient.getParams()).andReturn(httpParams);
+    expect(requestDefaultHttpClient.getParams()).andReturn(httpParams).anyTimes();
     // Digest authentication and close
     expect(requestDefaultHttpClient.execute(isA(HttpUriRequest.class))).andReturn(digestResponse);
     expect(requestDefaultHttpClient.getConnectionManager()).andReturn(clientConnectionManager);
@@ -375,10 +383,13 @@ public class TrustedHttpClientImplTest {
 
     HttpPost httpPost = new HttpPost("http://localhost:8080/fake");
     HttpParams httpParams = createNiceMock(HttpParams.class);
+    expect(httpParams.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 60000)).andReturn(httpParams);
+    expect(httpParams.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 60000)).andReturn(httpParams);
+    replay(httpParams);
     ClientConnectionManager clientConnectionManager = createMock(ClientConnectionManager.class);
 
     HttpClient httpClient = createMock("Request", HttpClient.class);
-    expect(httpClient.getParams()).andReturn(httpParams);
+    expect(httpClient.getParams()).andReturn(httpParams).anyTimes();
     // Security Handshake and close.
     expect(httpClient.execute(isA(HttpUriRequest.class))).andReturn(digestResponse);
     expect(httpClient.getConnectionManager()).andReturn(clientConnectionManager);
@@ -427,10 +438,13 @@ public class TrustedHttpClientImplTest {
 
     HttpPost httpPost = new HttpPost("http://localhost:8080/fake");
     HttpParams httpParams = createNiceMock(HttpParams.class);
+    expect(httpParams.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 60000)).andReturn(httpParams);
+    expect(httpParams.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 60000)).andReturn(httpParams);
+    replay(httpParams);
     ClientConnectionManager clientConnectionManager = createMock(ClientConnectionManager.class);
 
     HttpClient httpClient = createMock("Request", HttpClient.class);
-    expect(httpClient.getParams()).andReturn(httpParams);
+    expect(httpClient.getParams()).andReturn(httpParams).anyTimes();
     // Security Handshake and close.
     expect(httpClient.execute(isA(HttpUriRequest.class))).andReturn(digestResponse);
     expect(httpClient.getConnectionManager()).andReturn(clientConnectionManager);
@@ -478,13 +492,16 @@ public class TrustedHttpClientImplTest {
 
     HttpPost httpPost = new HttpPost("http://localhost:8080/fake");
     HttpParams httpParams = createNiceMock(HttpParams.class);
+    expect(httpParams.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 60000)).andReturn(httpParams);
+    expect(httpParams.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 60000)).andReturn(httpParams);
+    replay(httpParams);
     ClientConnectionManager clientConnectionManager = createMock(ClientConnectionManager.class);
 
     IMocksControl ctrl = EasyMock.createNiceControl();
     ctrl.checkOrder(false);
 
     HttpClient httpClient = createMock("Request", HttpClient.class);
-    expect(httpClient.getParams()).andReturn(httpParams);
+    expect(httpClient.getParams()).andReturn(httpParams).anyTimes();
     // First Digest handshake and close
     expect(httpClient.execute(isA(HttpUriRequest.class))).andReturn(digestResponse);
     expect(httpClient.getConnectionManager()).andReturn(clientConnectionManager);
@@ -532,10 +549,13 @@ public class TrustedHttpClientImplTest {
 
     HttpPost httpPost = new HttpPost("http://localhost:8080/fake");
     HttpParams httpParams = createNiceMock(HttpParams.class);
+    expect(httpParams.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 60000)).andReturn(httpParams);
+    expect(httpParams.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 60000)).andReturn(httpParams);
+    replay(httpParams);
     ClientConnectionManager clientConnectionManager = createMock(ClientConnectionManager.class);
 
     HttpClient httpClient = createMock("Request", HttpClient.class);
-    expect(httpClient.getParams()).andReturn(httpParams);
+    expect(httpClient.getParams()).andReturn(httpParams).anyTimes();
     // First Digest handshake and close
     expect(httpClient.execute(isA(HttpUriRequest.class))).andReturn(digestResponse);
     expect(httpClient.getConnectionManager()).andReturn(clientConnectionManager);
