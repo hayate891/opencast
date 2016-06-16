@@ -18,7 +18,9 @@ package org.opencastproject.ingest.impl;
 import org.opencastproject.capture.CaptureParameters;
 import org.opencastproject.mediapackage.MediaPackage;
 import org.opencastproject.mediapackage.MediaPackageElements;
+import org.opencastproject.metadata.dublincore.DublinCoreCatalog;
 import org.opencastproject.metadata.dublincore.DublinCoreCatalogImpl;
+import org.opencastproject.metadata.dublincore.DublinCoreCatalogService;
 import org.opencastproject.scheduler.api.SchedulerService;
 import org.opencastproject.security.api.AccessControlList;
 import org.opencastproject.security.api.AclScope;
@@ -32,6 +34,7 @@ import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.security.api.TrustedHttpClient;
 import org.opencastproject.security.api.User;
 import org.opencastproject.security.api.UserDirectoryService;
+import org.opencastproject.series.api.SeriesService;
 import org.opencastproject.serviceregistry.api.IncidentService;
 import org.opencastproject.serviceregistry.api.ServiceRegistryInMemoryImpl;
 import org.opencastproject.util.data.Tuple;
@@ -41,8 +44,8 @@ import org.opencastproject.workflow.api.WorkflowInstance;
 import org.opencastproject.workflow.api.WorkflowInstance.WorkflowState;
 import org.opencastproject.workflow.api.WorkflowService;
 import org.opencastproject.workingfilerepository.api.WorkingFileRepository;
+import org.opencastproject.util.NotFoundException;
 
-import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -51,22 +54,28 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.easymock.EasyMock;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
 public class IngestServiceImplTest {
   private IngestServiceImpl service = null;
+  private DublinCoreCatalogService dublinCoreService = null;
+  private SeriesService seriesService = null;
   private WorkflowService workflowService = null;
   private WorkflowInstance workflowInstance = null;
   private WorkingFileRepository wfr = null;
@@ -325,5 +334,94 @@ public class IngestServiceImplTest {
     Assert.assertEquals(1, mediaPackage.getCatalogs().length);
     Assert.assertEquals(1, mediaPackage.getAttachments().length);
   }
+
+  /**
+   * Test four cases: 1) If no config file 2) If config file but no key 3) If key and false value 4) If key and true
+   * value
+   *
+   * @throws Exception
+   */
+  @Test
+  public void testVarySeriesOverwriteConfiguration() throws Exception {
+    boolean isOverwriteSeries;
+    Dictionary<String, String> properties = new Hashtable<String, String>();
+
+    // Test with no properties
+    // NOTE: This test only works if the serivce.update() was not triggered by any previous tests
+    testSeriesUpdateNewAndExisting(null);
+
+    // Test with properties and no key
+    testSeriesUpdateNewAndExisting(properties);
+
+    // Test with properties and key is true
+    isOverwriteSeries = true;
+    properties.put(IngestServiceImpl.PROPKEY_OVERWRITE_SERIES, String.valueOf(isOverwriteSeries));
+    testSeriesUpdateNewAndExisting(properties);
+
+    // Test series overwrite key is false
+    isOverwriteSeries = false;
+    properties.put(IngestServiceImpl.PROPKEY_OVERWRITE_SERIES, String.valueOf(isOverwriteSeries));
+    testSeriesUpdateNewAndExisting(properties);
+  }
+
+  /**
+   * Test method for {@link org.opencastproject.ingest.impl.IngestServiceImpl#updateSeries(java.net.URI)}
+   */
+  private void testSeriesUpdateNewAndExisting(Dictionary<String, String> properties) throws Exception {
+
+    // default expectation for series overwrite is True
+    boolean isExpectSeriesOverwrite = true;
+
+    if (properties != null) {
+      service.updated(properties);
+      try {
+        boolean testForValue = Boolean.parseBoolean(((String) properties.get(IngestServiceImpl.PROPKEY_OVERWRITE_SERIES))
+                .trim());
+        isExpectSeriesOverwrite = testForValue;
+      } catch (Exception e) {
+        // If key or value not found or not boolean, use the default overwrite expectation
+      }
+    }
+
+    // Get test series dublin core for the mock return value
+    File catalogFile = new File(urlCatalog2);
+    if (!catalogFile.exists() || !catalogFile.canRead())
+      throw new Exception("Unable to access test catalog " + urlCatalog2.getPath());
+    FileInputStream in = new FileInputStream(catalogFile);
+    DublinCoreCatalog series = new DublinCoreCatalogImpl(in);
+    IOUtils.closeQuietly(in);
+
+    // Set dublinCore service to return test dublin core
+    dublinCoreService = org.easymock.EasyMock.createNiceMock(DublinCoreCatalogService.class);
+    org.easymock.EasyMock.expect(dublinCoreService.load((InputStream) EasyMock.anyObject()))
+            .andReturn(series).anyTimes();
+    org.easymock.EasyMock.replay(dublinCoreService);
+    service.setDublinCoreService(dublinCoreService);
+
+    // Test with mock found series
+    seriesService = EasyMock.createNiceMock(SeriesService.class);
+    EasyMock.expect(seriesService.getSeries((String) EasyMock.anyObject())).andReturn(series).once();
+    EasyMock.expect(seriesService.updateSeries(series)).andReturn(series).once();
+    EasyMock.replay(seriesService);
+    service.setSeriesService(seriesService);
+
+    // This is true or false depending on the isOverwrite value
+    Assert.assertEquals("Desire to update series is " + String.valueOf(isExpectSeriesOverwrite) + ".",
+            isExpectSeriesOverwrite,
+            service.updateSeries(urlCatalog2));
+
+    // Test with mock not found exception
+    EasyMock.reset(seriesService);
+    EasyMock.expect(seriesService.updateSeries(series)).andReturn(series).once();
+    EasyMock.expect(seriesService.getSeries((String) EasyMock.anyObject())).andThrow(new NotFoundException()).once();
+    EasyMock.replay(seriesService);
+
+    service.setSeriesService(seriesService);
+
+    // This should be true, i.e. create new series, in all cases
+    Assert.assertEquals("Always create a new series catalog.", true, service.updateSeries(urlCatalog2));
+
+  }
+
 
 }

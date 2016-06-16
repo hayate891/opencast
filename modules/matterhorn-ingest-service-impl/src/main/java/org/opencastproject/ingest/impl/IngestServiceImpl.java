@@ -76,6 +76,8 @@ import org.jdom.Namespace;
 import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.osgi.service.cm.ConfigurationException;
+import org.osgi.service.cm.ManagedService;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +94,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -105,7 +108,7 @@ import javax.management.ObjectInstance;
 /**
  * Creates and augments Matterhorn MediaPackages. Stores media into the Working File Repository.
  */
-public class IngestServiceImpl extends AbstractJobProducer implements IngestService {
+public class IngestServiceImpl extends AbstractJobProducer implements IngestService, ManagedService {
 
   /** The logger */
   private static final Logger logger = LoggerFactory.getLogger(IngestServiceImpl.class);
@@ -114,6 +117,9 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
   protected static final String WORKFLOW_DEFINITION_DEFAULT = "org.opencastproject.workflow.default.definition";
 
   public static final String JOB_TYPE = "org.opencastproject.ingest";
+
+  /** Managed Property key to overwrite existing series */
+  public static final String PROPKEY_OVERWRITE_SERIES = "org.opencastproject.series.overwrite";
 
   /** Methods that ingest zips create jobs with this operation type */
   public static final String INGEST_ZIP = "zip";
@@ -181,6 +187,12 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
   /** The default workflow identifier, if one is configured */
   protected String defaultWorkflowDefinionId;
 
+  /** The default is to overwrite series catalog on ingest */
+  protected boolean defaultIsOverWriteSeries = true;
+
+  /** Option to overwrite series on ingest */
+  protected boolean isOverwriteSeries = defaultIsOverWriteSeries;
+
   /**
    * Creates a new ingest service instance.
    */
@@ -212,6 +224,26 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
    */
   public void deactivate() {
     JmxUtil.unregisterMXBean(registerMXBean);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @see org.osgi.service.cm.ManagedService#updated(java.util.Dictionary)
+   * Retrieve ManagedService configuration, including option to overwrite series
+   */
+  @SuppressWarnings("rawtypes")
+  @Override
+  public void updated(Dictionary properties) throws ConfigurationException {
+    // try to get overwrite series option from config, use default if not configured
+    try {
+      isOverwriteSeries = Boolean.parseBoolean(((String) properties.get(PROPKEY_OVERWRITE_SERIES)).trim());
+    } catch (Exception e) {
+      isOverwriteSeries = defaultIsOverWriteSeries;
+      logger.warn("Unable to update configuration. {}", e.getMessage());
+    }
+    logger.info("Configuration updated. It is {} that existing series will be overwritten during ingest.",
+            isOverwriteSeries);
   }
 
   /**
@@ -655,10 +687,13 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
    *
    * @param uri
    *          the URI to the dublin core document containing series metadata.
+   * @return
+   *          true, if the series is created or overwritten, false if the existing series remains intact.
    */
-  protected void updateSeries(URI uri) throws IOException, IngestException {
+  protected boolean updateSeries(URI uri) throws IOException, IngestException {
     HttpResponse response = null;
     InputStream in = null;
+    boolean isUpdated = false;
     try {
       HttpGet getDc = new HttpGet(uri);
       response = httpClient.execute(getDc);
@@ -666,19 +701,23 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
       DublinCoreCatalog dc = dublinCoreService.load(in);
       String id = dc.getFirst(DublinCore.PROPERTY_IDENTIFIER);
       if (id == null) {
-        logger.warn("Series dublin core document contains no identifier");
+        logger.warn("Series dublin core document contains no identifier, rejecting ingested series cagtalog.");
       } else {
         try {
-          Boolean isNew = false;
           try {
             seriesService.getSeries(id);
+            if (isOverwriteSeries) {
+              // Update existing series
+              seriesService.updateSeries(dc);
+              isUpdated = true;
+              logger.debug("Ingest is overwriting the existing series {} with the ingested series", id);
+            } else {
+              logger.debug("Series {} already exists. Ignoring series catalog from ingest.", id);
+            }
           } catch (NotFoundException e) {
             logger.info("Creating new series {} with default ACL", id);
-            isNew = true;
-          }
-          seriesService.updateSeries(dc);
-
-          if (isNew) {
+            seriesService.updateSeries(dc);
+            isUpdated = true;
             String anonymousRole = securityService.getOrganization().getAnonymousRole();
             AccessControlList acl = new AccessControlList(new AccessControlEntry(anonymousRole, "read", true));
             seriesService.updateAccessControl(id, acl);
@@ -695,6 +734,7 @@ public class IngestServiceImpl extends AbstractJobProducer implements IngestServ
       IOUtils.closeQuietly(in);
       httpClient.close(response);
     }
+    return isUpdated;
   }
 
 
