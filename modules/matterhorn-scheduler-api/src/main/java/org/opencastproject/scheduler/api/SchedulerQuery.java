@@ -211,7 +211,7 @@ public class SchedulerQuery {
    * @return
    */
   public SchedulerQuery setPublisher(String publisher) {
-    if (StringUtils.isNotBlank(subject)) {
+    if (StringUtils.isNotBlank(publisher)) {
       this.publisher = publisher;
     }
     return this;
@@ -224,7 +224,7 @@ public class SchedulerQuery {
    * @return
    */
   public SchedulerQuery setDescription(String description) {
-    if (StringUtils.isNotBlank(subject)) {
+    if (StringUtils.isNotBlank(description)) {
       this.description = description;
     }
     return this;
@@ -294,7 +294,7 @@ public class SchedulerQuery {
    * @return
    */
   public SchedulerQuery setRightsHolder(String rightsHolder) {
-    if (StringUtils.isNotBlank(subject)) {
+    if (StringUtils.isNotBlank(rightsHolder)) {
       this.rightsHolder = rightsHolder;
     }
     return this;
