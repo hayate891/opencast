@@ -131,6 +131,8 @@ public class SolrIndexManager {
 
   private SecurityService securitySvc;
 
+  private int searchResultLimit = Integer.MAX_VALUE;
+
   /**
    * Creates a new management instance for the search index.
    *
@@ -238,6 +240,10 @@ public class SolrIndexManager {
       try {
         SolrQuery query = new SolrQuery(Schema.DC_ID + ":" + ClientUtils.escapeQueryChars(id) + " AND -"
                 + Schema.OC_DELETED + ":[* TO *]");
+        // searchResultLimit is flexible for junit test
+        if (searchResultLimit > 0) {
+          query.setRows(searchResultLimit);
+        }
         solrResponse = solrServer.query(query);
       } catch (Exception e1) {
         throw new SolrServerException(e1);
@@ -264,6 +270,10 @@ public class SolrIndexManager {
     } catch (IOException e) {
       throw new SolrServerException(e);
     }
+  }
+
+  public void setSearchResultLimit(int searchResultLimit) {
+    this.searchResultLimit = searchResultLimit;
   }
 
   /** Set the "locked" flag of an index entry. */
@@ -777,6 +787,7 @@ public class SolrIndexManager {
     SortedSet<TextAnnotation> sortedAnnotations = null;
     if (!"".equals(Schema.getOcKeywords(doc))) {
       sortedAnnotations = new TreeSet<TextAnnotation>(new Comparator<TextAnnotation>() {
+        @Override
         public int compare(TextAnnotation a1, TextAnnotation a2) {
           if ((RELEVANCE_BOOST * a1.getRelevance() + a1.getConfidence()) > (RELEVANCE_BOOST * a2.getRelevance() + a2
                   .getConfidence()))
