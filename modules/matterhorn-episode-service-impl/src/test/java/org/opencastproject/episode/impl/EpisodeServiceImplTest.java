@@ -229,9 +229,8 @@ public class EpisodeServiceImplTest {
                       }).size());
     }
     {
-      // Setting to new big limit
+      // Uses the default new big limit (max int)
       // ref https://wiki.apache.org/solr/CommonQueryParameters#rows
-      env.setSolrIndexManagerResultLimit(Integer.MAX_VALUE);
       Boolean isDeleted = env.getService().delete("10.0000/1");
       Assert.assertTrue(isDeleted);
       final SearchResult r = env.getService().find(systemQuery().id("10.0000/1"), env.getRewriter());
