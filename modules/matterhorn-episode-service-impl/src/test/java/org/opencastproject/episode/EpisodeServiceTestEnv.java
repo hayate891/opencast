@@ -116,6 +116,7 @@ public final class EpisodeServiceTestEnv {
   private SecurityService securityService;
   private PersistenceEnv penv;
   private String storage;
+  private SolrIndexManager solrIndexMgr;
 
   private UriRewriter rewriter = new UriRewriter() {
     @Override
@@ -268,8 +269,10 @@ public final class EpisodeServiceTestEnv {
     // episode service
     solrServer = EpisodeServicePublisher.setupSolr(new File(solrRoot));
     final StaticMetadataService mdService = newStaticMetadataService(workspace);
-    service = new EpisodeServiceImpl(new SolrRequester(solrServer), new SolrIndexManager(solrServer, workspace,
-            cell(Arrays.asList(mdService)), seriesService, mpeg7CatalogService, securityService), securityService,
+    solrIndexMgr = new SolrIndexManager(solrServer, workspace, cell(Arrays.asList(mdService)), seriesService,
+            mpeg7CatalogService, securityService);
+
+    service = new EpisodeServiceImpl(new SolrRequester(solrServer), solrIndexMgr, securityService,
             authorizationService, orgDirectory, serviceRegistry, null, workspace, mediaInspectionService,
             episodeDatabase, elementStore, "System Admin");
   }
@@ -277,6 +280,10 @@ public final class EpisodeServiceTestEnv {
   public void setReadWritePermissions() {
     getAcl().getEntries().add(new AccessControlEntry(studentRole.getName(), EpisodeService.READ_PERMISSION, true));
     getAcl().getEntries().add(new AccessControlEntry(studentRole.getName(), EpisodeService.WRITE_PERMISSION, true));
+  }
+
+  public void setSolrIndexManagerResultLimit(int limit) {
+    solrIndexMgr.setSearchResultLimit(limit);
   }
 
   private StaticMetadataService newStaticMetadataService(Workspace workspace) {

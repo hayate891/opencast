@@ -16,11 +16,18 @@
 
 package org.opencastproject.episode.impl;
 
-import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertTrue;
+import static org.opencastproject.episode.api.EpisodeQuery.systemQuery;
+import static org.opencastproject.episode.impl.EpisodeServiceImpl.mkPartial;
+import static org.opencastproject.mediapackage.MediaPackageSupport.loadFromClassPath;
+import static org.opencastproject.util.UrlSupport.DEFAULT_BASE_URL;
+import static org.opencastproject.util.data.Monadics.mlist;
+import static org.opencastproject.util.data.functions.Booleans.and;
+import static org.opencastproject.util.data.functions.Misc.chuck;
+
 import org.opencastproject.episode.EpisodeServiceTestEnv;
 import org.opencastproject.episode.api.EpisodeQuery;
 import org.opencastproject.episode.api.EpisodeService;
@@ -47,6 +54,13 @@ import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function2;
 import org.opencastproject.util.data.functions.Functions;
 
+import org.apache.commons.io.IOUtils;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -57,18 +71,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
-import static org.junit.Assert.assertTrue;
-import static org.opencastproject.episode.api.EpisodeQuery.systemQuery;
-import static org.opencastproject.episode.impl.EpisodeServiceImpl.mkPartial;
-import static org.opencastproject.mediapackage.MediaPackageSupport.loadFromClassPath;
-import static org.opencastproject.util.UrlSupport.DEFAULT_BASE_URL;
-import static org.opencastproject.util.data.Monadics.mlist;
-import static org.opencastproject.util.data.functions.Booleans.and;
-import static org.opencastproject.util.data.functions.Misc.chuck;
 
 /**
  * Tests the functionality of the search env.getService().
@@ -160,6 +162,79 @@ public class EpisodeServiceImplTest {
       assertEquals(1, r.size());
       // todo not good to make assumptions about versions...
       assertEquals(Version.version(3), r.getItems().get(0).getOcVersion());
+    }
+  }
+
+  @Test
+  public void testDefaultDelete10Versions() throws Exception {
+    final MediaPackage mpSimple = loadFromClassPath("/manifest-simple.xml");
+
+    int moreThan10 = 13;
+    // Make sure our mocked ACL has the read and write permission
+    env.setReadWritePermissions();
+    // create three versions of mpSimple
+    for (int i = 0; i < moreThan10; i++) {
+      env.getService().add(mpSimple);
+    }
+    {
+      final SearchResult r = env.getService().find(systemQuery().id("10.0000/1"), env.getRewriter());
+      Assert.assertEquals(moreThan10, r.size());
+      // check that each added media package has a unique version
+      Assert.assertEquals(r.size(),
+              mlist(env.getService().find(systemQuery().id("10.0000/1"), env.getRewriter()).getItems())
+              .foldl(Collections.<Version> set(), new Function2<Set<Version>, SearchResultItem, Set<Version>>() {
+                @Override
+                public Set<Version> apply(Set<Version> sum, SearchResultItem item) {
+                  sum.add(item.getOcVersion());
+                  return sum;
+                }
+              }).size());
+    }
+    {
+      // Setting limit to 0 skips over setting the result limit and uses the default 10
+      // ref https://wiki.apache.org/solr/CommonQueryParameters#rows
+      env.setSolrIndexManagerResultLimit(0);
+      Boolean isDeleted = env.getService().delete("10.0000/1");
+      Assert.assertTrue(isDeleted);
+      final SearchResult r = env.getService().find(systemQuery().id("10.0000/1"), env.getRewriter());
+      Assert.assertEquals("Versions over 10 are not deleted", (moreThan10 - 10), r.size());
+      Assert.assertEquals("The first left over is the 10th version", Version.version(10),
+              r.getItems().get(0).getOcVersion());
+    }
+  }
+
+  @Test
+  public void testBigRowLimitDeleteAllVersions() throws Exception {
+    final MediaPackage mpSimple = loadFromClassPath("/manifest-simple.xml");
+
+    int moreThan10 = 13;
+    // Make sure our mocked ACL has the read and write permission
+    env.setReadWritePermissions();
+    // create three versions of mpSimple
+    for (int i = 0; i < moreThan10; i++) {
+      env.getService().add(mpSimple);
+    }
+    {
+      final SearchResult r = env.getService().find(systemQuery().id("10.0000/1"), env.getRewriter());
+      Assert.assertEquals(moreThan10, r.size());
+      // check that each added media package has a unique version
+      Assert.assertEquals(r.size(),
+              mlist(env.getService().find(systemQuery().id("10.0000/1"), env.getRewriter()).getItems()).foldl(
+                      Collections.<Version> set(), new Function2<Set<Version>, SearchResultItem, Set<Version>>() {
+                        @Override
+                        public Set<Version> apply(Set<Version> sum, SearchResultItem item) {
+                          sum.add(item.getOcVersion());
+                          return sum;
+                        }
+                      }).size());
+    }
+    {
+      // Uses the default new big limit (max int)
+      // ref https://wiki.apache.org/solr/CommonQueryParameters#rows
+      Boolean isDeleted = env.getService().delete("10.0000/1");
+      Assert.assertTrue(isDeleted);
+      final SearchResult r = env.getService().find(systemQuery().id("10.0000/1"), env.getRewriter());
+      Assert.assertEquals("All versions are deleted", 0, r.size());
     }
   }
 
