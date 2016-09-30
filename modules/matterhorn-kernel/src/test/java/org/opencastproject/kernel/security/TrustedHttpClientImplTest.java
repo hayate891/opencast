@@ -292,12 +292,13 @@ public class TrustedHttpClientImplTest {
 
     // Setup DefaultHttpClients
     HttpClient securityDefaultHttpClient = createMock("Digest", HttpClient.class);
+    expect(securityDefaultHttpClient.getParams()).andReturn(httpParams).anyTimes();
     expect(securityDefaultHttpClient.execute(isA(HttpUriRequest.class))).andReturn(digestResponse);
     expect(securityDefaultHttpClient.getConnectionManager()).andReturn(clientConnectionManager);
     replay(securityDefaultHttpClient);
 
     HttpClient requestDefaultHttpClient = createMock("Request", HttpClient.class);
-    expect(requestDefaultHttpClient.getParams()).andReturn(httpParams).times(2);
+    expect(requestDefaultHttpClient.getParams()).andReturn(httpParams).anyTimes();
     expect(requestDefaultHttpClient.execute(isA(HttpUriRequest.class))).andReturn(okResponse);
     replay(requestDefaultHttpClient);
 
@@ -339,7 +340,7 @@ public class TrustedHttpClientImplTest {
     ClientConnectionManager clientConnectionManager = createMock(ClientConnectionManager.class);
 
     HttpClient requestDefaultHttpClient = createMock("Request", HttpClient.class);
-    expect(requestDefaultHttpClient.getParams()).andReturn(httpParams).times(2);
+    expect(requestDefaultHttpClient.getParams()).andReturn(httpParams).anyTimes();
     // Digest authentication and close
     expect(requestDefaultHttpClient.execute(isA(HttpUriRequest.class))).andReturn(digestResponse);
     expect(requestDefaultHttpClient.getConnectionManager()).andReturn(clientConnectionManager);
@@ -388,7 +389,7 @@ public class TrustedHttpClientImplTest {
     ClientConnectionManager clientConnectionManager = createMock(ClientConnectionManager.class);
 
     HttpClient httpClient = createMock("Request", HttpClient.class);
-    expect(httpClient.getParams()).andReturn(httpParams).times(2);
+    expect(httpClient.getParams()).andReturn(httpParams).anyTimes();
     // Security Handshake and close.
     expect(httpClient.execute(isA(HttpUriRequest.class))).andReturn(digestResponse);
     expect(httpClient.getConnectionManager()).andReturn(clientConnectionManager);
@@ -443,7 +444,7 @@ public class TrustedHttpClientImplTest {
     ClientConnectionManager clientConnectionManager = createMock(ClientConnectionManager.class);
 
     HttpClient httpClient = createMock("Request", HttpClient.class);
-    expect(httpClient.getParams()).andReturn(httpParams).times(2);
+    expect(httpClient.getParams()).andReturn(httpParams).anyTimes();
     // Security Handshake and close.
     expect(httpClient.execute(isA(HttpUriRequest.class))).andReturn(digestResponse);
     expect(httpClient.getConnectionManager()).andReturn(clientConnectionManager);
@@ -500,7 +501,7 @@ public class TrustedHttpClientImplTest {
     ctrl.checkOrder(false);
 
     HttpClient httpClient = createMock("Request", HttpClient.class);
-    expect(httpClient.getParams()).andReturn(httpParams).times(2);
+    expect(httpClient.getParams()).andReturn(httpParams).anyTimes();
     // First Digest handshake and close
     expect(httpClient.execute(isA(HttpUriRequest.class))).andReturn(digestResponse);
     expect(httpClient.getConnectionManager()).andReturn(clientConnectionManager);
@@ -554,7 +555,7 @@ public class TrustedHttpClientImplTest {
     ClientConnectionManager clientConnectionManager = createMock(ClientConnectionManager.class);
 
     HttpClient httpClient = createMock("Request", HttpClient.class);
-    expect(httpClient.getParams()).andReturn(httpParams).times(2);
+    expect(httpClient.getParams()).andReturn(httpParams).anyTimes();
     // First Digest handshake and close
     expect(httpClient.execute(isA(HttpUriRequest.class))).andReturn(digestResponse);
     expect(httpClient.getConnectionManager()).andReturn(clientConnectionManager);
