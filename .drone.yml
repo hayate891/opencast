@@ -1,0 +1,5 @@
+pipeline:
+  build: 
+    image: greglogan/qa-jessie:latest
+    commands:
+      - mvn clean install
