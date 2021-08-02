@@ -27,7 +27,7 @@
     <opencast.nexus.url>http://nexus.opencast.org</opencast.nexus.url>
     <eclipselink.version>2.6.4</eclipselink.version>
     <commons-collection.version>3.2.2</commons-collection.version>
-    <commons-compress.version>1.19</commons-compress.version>
+    <commons-compress.version>1.21</commons-compress.version>
     <httpcomponents-httpcore.version>4.4.1</httpcomponents-httpcore.version>
     <httpcomponents-httpclient.version>4.5</httpcomponents-httpclient.version>
     <aws.version>1.11.49_1</aws.version>
